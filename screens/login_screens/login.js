@@ -1,4 +1,4 @@
-import {ShadowBox} from 'react-native-shadow';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { useState } from "react";
 import {
@@ -9,27 +9,12 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
  
 const App=()=> {
   const [email, setU_Name] = useState("");
   const [password, setPassword] = useState("");
-  const shadowOpt = {
-    width: 160,
-    height: 170,
-    color: "#000",
-    border: 2,
-    radius: 3,
-    opacity: 0.2,
-    x: 0,
-    y: 3,
-    style: { marginVertical: 5 }
-  };
-
-
   return (
-    
     <View style={styles.container}>
         <View style={styles.logo}>
           <Image
@@ -39,7 +24,6 @@ const App=()=> {
         </View>
 
       <View style={styles.inputView1}>
-        
           <View style={styles.inputView2}>
           <TextInput
             style={styles.TextInput}
@@ -48,8 +32,6 @@ const App=()=> {
             onChangeText={(U_Name) => setU_Name(U_Name)}
           />
           </View>
-          
-          
           <View style={styles.inputView2}>
           <TextInput
             style={styles.TextInput}
@@ -62,15 +44,12 @@ const App=()=> {
           <Text style={styles.forgot_button}>Forgot Password?</Text>
           </TouchableOpacity>
       </View>
-      
       <View style={styles.botom_part}>
-      <BoxShadow setting={shadowOpt}>
           <View style={styles.loginBtn}>
           <TouchableOpacity>
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
           </View>
-          </BoxShadow>
           <View style={styles.bottom_text}>
 
             <View style={styles.bottom_text}>
@@ -106,6 +85,7 @@ const styles = StyleSheet.create({
     width      : null,
 		resizeMode : 'contain',
 },
+ 
   inputView1: {
     flex:2,
     justifyContent: 'center',
@@ -129,7 +109,7 @@ const styles = StyleSheet.create({
     padding: "5%",
   },
   loginText:{
-    color:'black',
+    color:'white',
     fontWeight:'bold',
     fontSize:14
   },
@@ -169,10 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#F2765A",
     bottom: "7%",
-    marginBottom:"15%",
-
-
-
+    marginBottom:"10%",
   },
   bottom_text: {
     alignItems:'center',

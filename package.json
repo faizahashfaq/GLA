@@ -16,8 +16,13 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-drop-shadow": "^0.0.4",
+    "react-native-elements": "^3.4.2",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
+    "react-native-shadow": "^1.2.2",
+    "react-native-shadow-2": "^6.0.3",
+    "react-native-svg": "C:\\Users\\irami\\Documents\\FYP_project\\GLA",
     "react-native-web": "0.17.1"
   },
   "devDependencies": {

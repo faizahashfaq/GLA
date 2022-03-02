@@ -4,16 +4,16 @@ import React from "react";
 import { View, TouchableOpacity, Text, Image } from "react-native";
 import StreakIcon from "../assets/icons/StreakIcon";
 import BadgeIcon from "../assets/icons/BadgeIcon";
-import StarIcon from "../assets/icons/StarIcon";
+import Stars from "./Stars";
 
-const AppBar = ({ stars = "167" }) => {
+const AppBar = () => {
 	return (
 		<View
 			style={{
 				backgroundColor: "#FFF",
 				display: "flex",
 				flexDirection: "row",
-				paddingTop: 35,
+				paddingTop: 20,
 				paddingHorizontal: 20,
 				paddingBottom: 15,
 				alignItems: "center",
@@ -28,33 +28,7 @@ const AppBar = ({ stars = "167" }) => {
 				</TouchableOpacity>
 			</View>
 			<View>
-				<TouchableOpacity
-					style={{
-						display: "flex",
-						flexDirection: "row",
-
-						alignItems: "center",
-						backgroundColor: "#F2765A",
-						paddingVertical: 7,
-						paddingHorizontal: 10,
-
-						borderRadius: 20,
-					}}>
-					<Text
-						style={{
-							color: "#FFF",
-							fontWeight: "700",
-							fontSize: 16,
-							fontFamily: "CorsaGrotesk-Bold",
-						}}>
-						{stars}
-					</Text>
-					<Image
-						style={{ width: 20, height: 20, marginLeft: 10 }}
-						resizeMode="contain"
-						source={require("../assets/icons/star.png")}
-					/>
-				</TouchableOpacity>
+				<Stars />
 			</View>
 		</View>
 	);

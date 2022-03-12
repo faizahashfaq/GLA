@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import { TouchableOpacity, Dimensions } from "react-native";
+import { TouchableOpacity, Dimensions, Alert } from "react-native";
 import { BoxShadow } from "react-native-shadow";
 const { width } = Dimensions.get("window");
 export const TouchableCards = ({

@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-const Home = ({ user = "Saira" }) => {
+const Home = ({ user = "Saira", navigation }) => {
 	return (
 		<SafeAreaView>
 			<AppBar />
@@ -45,7 +45,13 @@ const Home = ({ user = "Saira" }) => {
 				{/* Welcome */}
 				<WelcomeOnHome user={user} style={styles.welcome} />
 				{/* {Levels} */}
-				<LevelsOnHome />
+				<LevelsOnHome
+					onPress={() =>
+						navigation.navigate("Routine Navigation", {
+							screen: "CreateRoutine-Parent",
+						})
+					}
+				/>
 				{/* {Daily Challenges} */}
 				<DailyChallengeCard />
 
@@ -93,9 +99,13 @@ const WelcomeOnHome = ({ user, ...props }) => {
 	);
 };
 
-const LevelsOnHome = ({ currentLevels = "9", totalLevels = "50" }) => {
+const LevelsOnHome = ({
+	currentLevels = "9",
+	totalLevels = "50",
+	...props
+}) => {
 	return (
-		<TouchableCards color="#FA98EA">
+		<TouchableCards {...props} color="#FA98EA">
 			<View
 				style={{
 					flex: 0.8,

@@ -5,7 +5,6 @@ import { ThemeContext, ThemeProvider } from "./theme/Theme";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AppLoading from "expo-app-loading";
-
 import useFonts from "./utils/fontsLoading";
 import React, { useState } from "react";
 import {
@@ -54,7 +53,6 @@ function App() {
 		</NavigationContainer>
 	);
 }
-
 export default App;
 
 // const styles = StyleSheet.create({

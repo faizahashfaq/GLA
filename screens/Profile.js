@@ -21,10 +21,10 @@ import SpeechIcon from "../assets/icons/SpeechIcon";
 import AppBar from "../components/AppBar";
 
 const { width, height } = Dimensions.get("window");
-const Profile = () => {
+const Profile = ({ navigation }) => {
 	return (
 		<SafeAreaView>
-			<AppBar />
+			<AppBar navigation={navigation} />
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				style={{ marginHorizontal: 20, marginBottom: 70, marginTop: 20 }}>
@@ -70,7 +70,7 @@ const Profile = () => {
 							justifyContent: "flex-end",
 						}}>
 						<Image
-							resizeMode="cover"
+							resizeMode='cover'
 							style={{
 								width: 80,
 								height: 80,
@@ -210,11 +210,16 @@ const Statistics = ({ color, background, title, icon, stat }) => {
 	);
 };
 
-const AchievementCard = ({ image, title, description, completed = true }) => {
+export const AchievementCard = ({
+	image,
+	title,
+	description,
+	completed = true,
+}) => {
 	return (
 		<View
 			style={{
-				//height: 100,
+				height: 100,
 				width: width - 40,
 				flexDirection: "row",
 				alignItems: "center",
@@ -237,7 +242,7 @@ const AchievementCard = ({ image, title, description, completed = true }) => {
 					flexDirection: "row",
 				}}>
 				<Image
-					resizeMode="contain"
+					resizeMode='contain'
 					style={{
 						width: 55,
 						height: 55,

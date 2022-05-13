@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 const Routine = ({ navigation }) => {
 	return (
 		<SafeAreaView>
-			<AppBar />
+			<AppBar navigation={navigation} />
 			<ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 				<View style={{ marginTop: 20, marginBottom: 30 }}>
 					<Text
@@ -62,7 +62,7 @@ const Routine = ({ navigation }) => {
 				<View style={{ marginBottom: 20 }}>
 					<TouchableCards
 						height={100}
-						color="#9967E4"
+						color='#9967E4'
 						onPress={() =>
 							navigation.navigate("Routine Navigation", {
 								screen: "Daily Learner",
@@ -99,7 +99,7 @@ const Routine = ({ navigation }) => {
 					</TouchableCards>
 				</View>
 				<TouchableCards
-					color="#FFFA84"
+					color='#FFFA84'
 					height={360}
 					style={{ marginBottom: 20 }}>
 					<View
@@ -149,7 +149,7 @@ const Routine = ({ navigation }) => {
 					activeOpacity={0.8}
 					onPress={() => {
 						navigation.navigate("Routine Navigation", {
-							screen: "Activities",
+							screen: "Routine Parent",
 							params: {
 								name: "Activities",
 							},

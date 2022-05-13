@@ -1,28 +1,22 @@
 /** @format */
-
-import { StyleSheet, Text, View, SafeAreaView, StatusBar } from "react-native";
-import { ThemeContext, ThemeProvider } from "./theme/Theme";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AppLoading from "expo-app-loading";
 import useFonts from "./utils/fontsLoading";
-import React, { useState } from "react";
-import {
-	responsiveHeight,
-	responsiveWidth,
-} from "react-native-responsive-dimensions";
-import Home from "./screens/Home";
-import BottomNavigation from "./components/BottomNavigation";
-import AppBar from "./components/AppBar";
-import RoutineNavigation from "./screens/Routine/RoutineNavigation";
+import React, { useEffect, useState } from "react";
+import { LogBox } from "react-native";
 
-const Stack = createNativeStackNavigator();
+import { GlobalProvider } from "./context/GlobalContext";
+import GlobalNavigation from "./routes/GlobalNavigation";
+import { initializeFirebase } from "./utils/firebaseConfig";
 function App() {
 	const [IsReady, SetIsReady] = useState(false);
-
 	const LoadFonts = async () => {
 		await useFonts();
 	};
+	// const db = initializeFirebase();
+	// useEffect(async () => {
+	// 	const snapshot = await db.collection("assets").get();
+	// 	console.log(snapshot);
+	// }, []);
 
 	if (!IsReady) {
 		return (
@@ -35,24 +29,13 @@ function App() {
 	}
 
 	return (
-		<NavigationContainer>
-			<StatusBar />
-
-			<Stack.Navigator>
-				<Stack.Screen
-					name="Bottom Navigation"
-					component={BottomNavigation}
-					options={{ headerShown: false }}
-				/>
-				<Stack.Screen
-					component={RoutineNavigation}
-					name="Routine Navigation"
-					options={{ headerShown: false }}
-				/>
-			</Stack.Navigator>
-		</NavigationContainer>
+		<GlobalProvider>
+			<GlobalNavigation />
+		</GlobalProvider>
 	);
 }
+
+LogBox.ignoreLogs(["Setting a timer"]);
 export default App;
 
 // const styles = StyleSheet.create({

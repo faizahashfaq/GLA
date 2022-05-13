@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 const Home = ({ user = "Saira", navigation }) => {
 	return (
 		<SafeAreaView>
-			<AppBar />
+			<AppBar navigation={navigation} />
 			<ScrollView
 				style={styles.container}
 				showsVerticalScrollIndicator={false}
@@ -47,8 +47,8 @@ const Home = ({ user = "Saira", navigation }) => {
 				{/* {Levels} */}
 				<LevelsOnHome
 					onPress={() =>
-						navigation.navigate("Routine Navigation", {
-							screen: "CreateRoutine-Parent",
+						navigation.navigate("Speech Navigation", {
+							screen: "Levels",
 						})
 					}
 				/>
@@ -105,7 +105,7 @@ const LevelsOnHome = ({
 	...props
 }) => {
 	return (
-		<TouchableCards {...props} color="#FA98EA">
+		<TouchableCards {...props} color='#FA98EA'>
 			<View
 				style={{
 					flex: 0.8,
@@ -154,10 +154,10 @@ const LevelsOnHome = ({
 	);
 };
 
-const DailyChallengeCard = () => {
+export const DailyChallengeCard = ({ ...props }) => {
 	return (
 		<View style={{ position: "relative" }}>
-			<TouchableCards color="#FF3C3C" style={{ marginTop: 25 }}>
+			<TouchableCards {...props} color='#FF3C3C' style={{ marginTop: 25 }}>
 				<View
 					style={{
 						flex: 0.6,
@@ -206,7 +206,7 @@ const DailyChallengeCard = () => {
 const RoutineCard = () => {
 	return (
 		<TouchableCards
-			color="#3C67FF"
+			color='#3C67FF'
 			style={{ marginTop: 25, height: 295, marginBottom: 20 }}>
 			<View
 				style={{

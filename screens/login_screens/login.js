@@ -1,166 +1,117 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { useState } from "react";
+/** @format */
+
+import React, { useContext, useState, useEffect } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Button,
-  TouchableOpacity,
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	TextInput,
+	Dimensions,
+	Button,
+	TouchableOpacity,
+	ScrollView,
 } from "react-native";
- 
-const App=()=> {
-  const [email, setU_Name] = useState("");
-  const [password, setPassword] = useState("");
-  return (
-    <View style={styles.container}>
-        <View style={styles.logo}>
-          <Image
-              
-              source={require('./assets/logo.png')}
-          />
-        </View>
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { GlobalContext } from "../../context/GlobalContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ArrowIcon from "../../assets/icons/RightArrowIcon";
 
-      <View style={styles.inputView1}>
-          <View style={styles.inputView2}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="UserName"
-            placeholderTextColor="gray"
-            onChangeText={(U_Name) => setU_Name(U_Name)}
-          />
-          </View>
-          <View style={styles.inputView2}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password."
-            placeholderTextColor="gray"
-            onChangeText={(password) => setU_Name(password)}
-          />
-          </View>
-          <TouchableOpacity>
-          <Text style={styles.forgot_button}>Forgot Password?</Text>
-          </TouchableOpacity>
-      </View>
-      <View style={styles.botom_part}>
-          <View style={styles.loginBtn}>
-          <TouchableOpacity>
-            <Text style={styles.loginText}>LOGIN</Text>
-          </TouchableOpacity>
-          </View>
-          <View style={styles.bottom_text}>
+const { width, height } = Dimensions.get("window");
+const App = ({ navigation }) => {
+	const context = useContext(GlobalContext);
+	const [email, setU_Name] = useState("");
+	const [password, setPassword] = useState("");
+	// const setter = async () => {
+	// 	const loginStatus = await AsyncStorage.setItem('@isLoggedIn', isLoggedIn)
+	// 	return loginStatus
+	// }
 
-            <View style={styles.bottom_text}>
-              <Text style={styles.Text2}>New to GLA?</Text>
-            </View>
-            <View>
-            <TouchableOpacity>
-            <Text style={styles.signup}>Sign up</Text>
-            </TouchableOpacity>
-            </View>
-          </View>
-      </View>
-    </View>
- );
-}
- 
+	return (
+		<ScrollView contentContainerStyle={styles.container}>
+			<View style={{ alignItems: "center", marginBottom: 60 }}>
+				<Image
+					resizeMode='cover'
+					style={{ width: 200, height: 200 }}
+					source={require("../../assets/images/space.png")}
+				/>
+			</View>
+			<KeyboardAwareScrollView>
+				<TextInput placeholder='Username or Email' style={styles.textInput} />
+				<TextInput placeholder='Password' style={styles.textInput} />
+				<TouchableOpacity style={{ alignItems: "flex-end" }}>
+					<Text style={{ color: "#F17559", fontFamily: "CorsaGrotesk-Medium" }}>
+						Forgot Password?
+					</Text>
+				</TouchableOpacity>
+			</KeyboardAwareScrollView>
+			<KeyboardAwareScrollView style={{ marginTop: 80 }}>
+				<TouchableOpacity
+					activeOpacity={0.9}
+					onPress={() => {}}
+					style={{
+						alignSelf: "center",
+						alignItems: "center",
+						justifyContent: "center",
+						flexDirection: "row",
+						borderRadius: 5,
+						width: width - 40,
+						height: 60,
+						marginBottom: 20,
+						backgroundColor: "#F2765A",
+					}}>
+					<Text
+						style={{
+							marginRight: 15,
+							fontFamily: "CorsaGrotesk-Bold",
+							fontSize: 18,
+							color: "#FFF",
+						}}>
+						GO
+					</Text>
+				</TouchableOpacity>
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "center",
+						marginTop: 10,
+					}}>
+					<Text style={{ fontFamily: "CorsaGrotesk-Regular" }}>
+						New to GLA?{" "}
+					</Text>
+					<TouchableOpacity
+						activeOpacity={0.9}
+						onPress={() => navigation.navigate("SignUp_1")}>
+						<Text style={{ fontFamily: "CorsaGrotesk-Bold", color: "#F2765A" }}>
+							Sign Up
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</KeyboardAwareScrollView>
+		</ScrollView>
+	);
+};
+
 const styles = StyleSheet.create({
-  container: {
-    flexDirection:'column',
-    flex:1,
-    backgroundColor: "#fff",
-    width:"100%",
-    height:"100%",
-    alignItems:'center',
-    marginTop:0,
-    justifyContent:'center',
-  },
-  logo: {
-    flex:2,
-    flexDirection:"row",
-    justifyContent:'flex-start',
-    marginTop:'30%',
-    width      : null,
-		resizeMode : 'contain',
-},
- 
-  inputView1: {
-    flex:2,
-    justifyContent: 'center',
-    flexDirection: "column",
-    borderRadius: 30,
-    padding:"0%",
-    width: "80%",
-    height: 45,
-    marginBottom: "50%",
-    alignItems: "center",
-  },
-  inputView2: {
-    backgroundColor: "#F9F9F9",
-    borderRadius: 25,
-    width: "100%",
-    marginBottom: "5%",
-    alignItems: "center",
-  },
-  TextInput: {
-    height: 50,
-    padding: "5%",
-  },
-  loginText:{
-    color:'white',
-    fontWeight:'bold',
-    fontSize:14
-  },
-  forgot_button: {
-    width: "20%",
-    height: 50,
-    marginLeft:"68%",
-    color:"#F2765A",
-  },
-  signup:{
-    
-    width: "20%",
-    height: 50,
-    marginLeft:"68%",
-    color:"#F2765A",
-  },
-  
-  Text2: {
-    paddingTop:"2%",
-    height: 50,
-  },
-  botom_part:{
-    position:'absolute',
-    flexDirection:'column',
-    justifyContent:'center',
-    alignItems:'center',
-    width:"100%",
-    bottom:"0%",
-  },
-  loginBtn: {
-    flex:1,
-    flexDirection:"row",
-    width: "80%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F2765A",
-    bottom: "7%",
-    marginBottom:"10%",
-  },
-  bottom_text: {
-    alignItems:'center',
-    position:'absolute',
-    flex:2,
-    flexDirection:'row',
-    bottom:"0%",
-    width:"100%",
-    justifyContent:'center',
-    marginBottom:"2%"
-  }
+	container: {
+		flexDirection: "column",
+		backgroundColor: "#fff",
+		width: width,
+		height: height - 20,
+		paddingHorizontal: 20,
+		paddingTop: 40,
+		paddingVertical: 20,
+		justifyContent: "center",
+	},
+	textInput: {
+		textAlign: "left",
+		height: 60,
+		backgroundColor: "#F9F9F9",
+		borderRadius: 10,
+		paddingHorizontal: 10,
+		fontFamily: "CorsaGrotesk-Regular",
+		marginBottom: 20,
+	},
 });
 
 export default App;

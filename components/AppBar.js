@@ -6,7 +6,7 @@ import StreakIcon from "../assets/icons/StreakIcon";
 import BadgeIcon from "../assets/icons/BadgeIcon";
 import Stars from "./Stars";
 
-const AppBar = () => {
+const AppBar = ({ navigation }) => {
 	return (
 		<View
 			style={{
@@ -23,7 +23,12 @@ const AppBar = () => {
 				<TouchableOpacity style={{ marginRight: 25 }}>
 					<StreakIcon />
 				</TouchableOpacity>
-				<TouchableOpacity>
+				<TouchableOpacity
+					onPress={() =>
+						navigation.navigate("Gamification", {
+							screen: "Mission",
+						})
+					}>
 					<BadgeIcon />
 				</TouchableOpacity>
 			</View>

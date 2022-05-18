@@ -11,7 +11,7 @@ import {
 import LottieView from "lottie-react-native";
 const { width, height } = Dimensions.get("window");
 
-const CongratulationScreen = () => {
+const CongratulationScreen = ({ navigation }) => {
 	return (
 		<SafeAreaView>
 			<View
@@ -73,7 +73,7 @@ const CongratulationScreen = () => {
 						<TouchableOpacity
 							activeOpacity={0.9}
 							onPress={() => {
-								navigation.navigate("congrats");
+								navigation.navigate("child_basic_info");
 							}}
 							style={{
 								alignSelf: "center",

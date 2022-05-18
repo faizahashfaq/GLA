@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	SafeAreaView,
 	Text,
@@ -14,6 +14,8 @@ import LottieView from "lottie-react-native";
 import Rocket from "../assets/images/Rocket";
 import { TouchableCards } from "../components/TouchableCards";
 import AppBar from "../components/AppBar";
+import firebase from "../utils/firebaseConfig";
+
 // Current Width & Height of the screen
 const { width, height } = Dimensions.get("window");
 
@@ -35,6 +37,21 @@ const styles = StyleSheet.create({
 });
 
 const Home = ({ user = "Saira", navigation }) => {
+	const [levels, setLevels] = React.useState([]);
+	async function getLevels() {
+		const snapResult = [];
+		const querySnapshot = await firebase
+			.firestore()
+			.collection("guardians")
+			.where("Email", "==", "abcd123")
+			.get();
+		querySnapshot.forEach((doc) => snapResult.push(doc.data()));
+		setLevels([...snapResult]);
+	}
+	useEffect(() => {
+		getLevels();
+	}, []);
+	console.log(levels);
 	return (
 		<SafeAreaView>
 			<AppBar navigation={navigation} />
@@ -53,7 +70,13 @@ const Home = ({ user = "Saira", navigation }) => {
 					}
 				/>
 				{/* {Daily Challenges} */}
-				<DailyChallengeCard />
+				<DailyChallengeCard
+					onPress={() => {
+						navigation.navigate("Gamification", {
+							screen: "Reward",
+						});
+					}}
+				/>
 
 				{/* {Routine} */}
 				<RoutineCard />

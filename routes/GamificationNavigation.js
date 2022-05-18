@@ -6,6 +6,7 @@ import Mission from "../screens/Gamification/Mission";
 import Achievements from "../screens/Gamification/Achievements";
 import DailyChallenges from "../screens/Gamification/DailyChallenges";
 import DailyLearner from "../screens/Gamification/DailyLearners";
+import AchievementReward from "../screens/Gamification/AchievementReward";
 
 const Stack = createNativeStackNavigator();
 const LoginNavigation = () => {
@@ -15,6 +16,7 @@ const LoginNavigation = () => {
 			<Stack.Screen name='Achievements' component={Achievements} />
 			<Stack.Screen name='Daily Challenges' component={DailyChallenges} />
 			<Stack.Screen name='Daily Learner' component={DailyLearner} />
+			<Stack.Screen name='Reward' component={AchievementReward} />
 		</Stack.Navigator>
 	);
 };

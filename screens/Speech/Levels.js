@@ -11,11 +11,11 @@ import {
 	FlatList,
 } from "react-native";
 import * as Progress from "react-native-progress";
-import { collection, getDocs } from "firebase/firestore";
-import database from "../../utils/firebaseConfig";
+// import { collection, getDocs } from "firebase/firestore";
+// import database from "../../utils/firebaseConfig";
 import GoBack from "../../components/GoBack";
 import StarIcon from "../../assets/icons/StarIcon";
-import { async } from "@firebase/util";
+// import { async } from "@firebase/util";
 
 const { width, height } = Dimensions.get("window");
 

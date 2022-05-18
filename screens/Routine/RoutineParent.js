@@ -21,6 +21,7 @@ import GoBack from "../../components/GoBack";
 import moment from "moment";
 import ArrowUp from "../../assets/icons/ArrowUp";
 import ArrowDown from "../../assets/icons/ArrowDown";
+import { CheckedBox } from "../login_screens/Questionaire";
 
 const { width, height } = Dimensions.get("window");
 const RoutineParent = ({ navigation }) => {
@@ -35,6 +36,11 @@ const RoutineParent = ({ navigation }) => {
 		{ label: "Apple", value: "apple" },
 		{ label: "Banana", value: "banana" },
 	]);
+	const [routineRepeat, setRoutineRepeat] = useState({
+		daily: false,
+		weekly: false,
+		monthly: false,
+	});
 	const [image, setImage] = useState([]);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -90,7 +96,7 @@ const RoutineParent = ({ navigation }) => {
 					{"Routine Name"}
 				</Text>
 				<TextInput
-					placeholder="Daily Routine"
+					placeholder='Daily Routine'
 					value={text}
 					onChangeText={(e) => setText(e)}
 					style={{
@@ -114,6 +120,7 @@ const RoutineParent = ({ navigation }) => {
 					}}>
 					{"Routine Type"}
 				</Text>
+
 				<DropDownPicker
 					open={openDropDown}
 					value={dropdownValue}
@@ -160,6 +167,56 @@ const RoutineParent = ({ navigation }) => {
 						fontFamily: "CorsaGrotesk-Medium",
 					}}
 				/>
+			</View>
+			<View style={{ paddingHorizontal: 20 }}>
+				<Text
+					style={{
+						fontFamily: "CorsaGrotesk-Medium",
+						fontSize: 14,
+						color: "#666",
+						marginBottom: 10,
+					}}>
+					How many times you want to repeat it?
+				</Text>
+				<View
+					style={{
+						flexDirection: "row",
+						flexWrap: "wrap",
+					}}>
+					<CheckedBox
+						title={"Daily"}
+						state={routineRepeat.daily}
+						onPress={() => {
+							setRoutineRepeat({
+								daily: !routineRepeat.daily,
+								weekly: false,
+								monthly: false,
+							});
+						}}
+					/>
+					<CheckedBox
+						title={"Weekly"}
+						state={routineRepeat.weekly}
+						onPress={() => {
+							setRoutineRepeat({
+								daily: false,
+								weekly: !routineRepeat.weekly,
+								monthly: false,
+							});
+						}}
+					/>
+					<CheckedBox
+						title={"Monthly"}
+						state={routineRepeat.monthly}
+						onPress={() => {
+							setRoutineRepeat({
+								daily: false,
+								weekly: false,
+								monthly: !routineRepeat.monthly,
+							});
+						}}
+					/>
+				</View>
 			</View>
 			<View
 				style={{
@@ -257,7 +314,7 @@ const RoutineParent = ({ navigation }) => {
 							borderRadius: 5,
 							marginRight: 10,
 						}}>
-						<Entypo name="camera" size={24} color="#F2765A" />
+						<Entypo name='camera' size={24} color='#F2765A' />
 						<Text
 							style={{
 								marginLeft: 5,
@@ -281,7 +338,7 @@ const RoutineParent = ({ navigation }) => {
 							elevation: 1,
 							borderRadius: 5,
 						}}>
-						<Ionicons name="ios-apps" size={24} color="#393939" />
+						<Ionicons name='ios-apps' size={24} color='#393939' />
 					</TouchableOpacity>
 				</View>
 
@@ -305,11 +362,11 @@ const RoutineParent = ({ navigation }) => {
 											backgroundColor: "#F2765A",
 											borderRadius: 30,
 										}}>
-										<Entypo name="minus" size={14} color="white" />
+										<Entypo name='minus' size={14} color='white' />
 									</TouchableOpacity>
 									<Image
 										source={{ uri: img.uri }}
-										resizeMode="cover"
+										resizeMode='cover'
 										style={{
 											width: 50,
 											height: 50,
@@ -365,11 +422,11 @@ const RoutineParent = ({ navigation }) => {
 						style={{
 							borderRadius: 0,
 						}}
-						testID="dateTimePicker"
+						testID='dateTimePicker'
 						value={new Date(date)}
 						mode={mode}
 						is24Hour={false}
-						display="default"
+						display='default'
 						onChange={onChange}
 					/>
 				</View>

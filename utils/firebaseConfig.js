@@ -1,17 +1,17 @@
 /** @format */
-import * as firebase from "firebase/app";
-import { getFirestore, collection } from "firebase/firestore";
-
+import firebase from "firebase";
+import "firebase/firestore";
 const firebaseConfig = {
 	apiKey: "AIzaSyD14AEbXn8Cptzj6QeEGNHSvLGfJMfZVzs",
 	authDomain: "glapp-43f53.firebaseapp.com",
 	projectId: "glapp-43f53",
 	storageBucket: "glapp-43f53.appspot.com",
 	messagingSenderId: "156472750624",
-	appId: "1:156472750624:web:5828fde5c726bc02690245",
-	measurementId: "G-Y67KKLPXLK",
+	appId: "1:156472750624:web:a33d2f34bd146cdc690245",
+	measurementId: "G-3Y3S18DJVN",
 };
 
-const db = getFirestore(firebase.initializeApp(firebaseConfig));
+firebase.initializeApp(firebaseConfig);
+firebase.firestore();
 
-export default db;
+export default firebase;

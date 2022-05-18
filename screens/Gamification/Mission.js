@@ -9,6 +9,7 @@ import {
 	Image,
 	ScrollView,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import GoBack from "../../components/GoBack";
 import { DailyChallengeCard } from "../Home";
 const { width, height } = Dimensions.get("window");
@@ -48,7 +49,13 @@ const Mission = ({ route, navigation }) => {
 
 export default Mission;
 
-const AchievementCard = ({ image, title, description, completed = true }) => {
+const AchievementCard = ({
+	image,
+	title,
+	description,
+	completed = true,
+	button,
+}) => {
 	return (
 		<View
 			style={{
@@ -104,6 +111,9 @@ const AchievementCard = ({ image, title, description, completed = true }) => {
 					{description}
 				</Text>
 			</View>
+			<TouchableOpacity>
+				<Text>Claim Reward</Text>
+			</TouchableOpacity>
 		</View>
 	);
 };

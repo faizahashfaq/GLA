@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	SafeAreaView,
 	Text,
@@ -10,6 +10,8 @@ import {
 	StyleSheet,
 	Image,
 } from "react-native";
+import * as Notifications from "expo-notifications";
+
 import CountDown from "react-native-countdown-component";
 import LottieView from "lottie-react-native";
 import Rocket from "../assets/images/Rocket";
@@ -228,6 +230,37 @@ export const DailyChallengeCard = ({ ...props }) => {
 };
 
 const RoutineCard = () => {
+	const [token, setToken] = useState(null);
+	const SECRET_KEY =
+		"AAAAJG6AsiA:APA91bGx19XgIVCeSztSp71zn0k_b9XNs15ssvbvMUQDaKP5LgHhs0pQ7V0SNZC4qKZcr7weVtr8e5M6WA7KEPFcAWIpJy8VHs5vyMbeXqzhfXcADJ-Kb3GIPGZ96QNiYe_yJBd9HiRC";
+
+	console.log(token);
+	const sendNotification = async () => {
+		const tokenDevice = (await Notifications.getDevicePushTokenAsync()).data;
+		setToken(tokenDevice);
+
+		await fetch(
+			"https://fcm.googleapis.com/v1/projects/project-156472750624/messages:send",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `key=${SECRET_KEY}`,
+				},
+				body: JSON.stringify({
+					to: token,
+					priority: "normal",
+					data: {
+						experienceId: "@huzaifastudios/fyp-gla",
+						scopeKey: "@huzaifastudios/fyp-gla",
+						title: "\uD83D\uDCE7 You've got mail",
+						message: "Hello world! \uD83C\uDF10",
+					},
+				}),
+			}
+		).catch((err) => console.log(err));
+	};
+
 	return (
 		<TouchableCards
 			color='#3C67FF'
@@ -267,10 +300,9 @@ const RoutineCard = () => {
 						justifyContent: "center",
 					}}>
 					<CountDown
-						until={1000}
+						until={10}
 						onFinish={() => {
-							//TODO: Send a push notification with routine details
-							return null;
+							sendNotification();
 						}}
 						digitStyle={{
 							backgroundColor: "#FFF",

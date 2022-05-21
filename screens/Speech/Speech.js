@@ -7,10 +7,14 @@ import {
 	Text,
 	View,
 	Dimensions,
+	StyleSheet,
 	Animated,
 	TouchableOpacity,
 } from "react-native";
+import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Modal from "react-native-modal";
 import * as TextToSpeech from "expo-speech";
 import * as Progress from "react-native-progress";
 import LottieView from "lottie-react-native";
@@ -69,8 +73,10 @@ const { width, height } = Dimensions.get("window");
 const Speech = ({ navigation }) => {
 	const [currentWord, setCurrentWord] = useState(questions[0].word);
 	const [listening, setListening] = useState(false);
+	const [newPath, setNewPath] = useState(null);
 	const [recording, setRecording] = useState(false);
-	const [record, setRecord] = useState(null);
+	const [rewardModal, setRewardModal] = useState(false);
+	const [quitModal, setQuitModal] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [questionIndex, setQuestionIndex] = useState(0);
 	const translateY = useRef(new Animated.Value(200)).current;
@@ -141,8 +147,20 @@ const Speech = ({ navigation }) => {
 		setRecording(false);
 		await recording.stopAndUnloadAsync();
 		const uri = recording.getURI();
-		console.log("Recording stopped and stored at", uri);
-		playSound(uri);
+		//Rename the file in the system
+		const directory = await FileSystem.documentDirectory;
+		const newPath = `${directory}/A.wav`;
+		try {
+			await FileSystem.moveAsync({
+				from: uri,
+				to: newPath,
+			});
+		} catch (e) {
+			console.log(`Error from Move Async: ${e}`);
+		}
+
+		console.log("Recording stopped and stored at", newPath);
+		playSound(newPath);
 	}
 	const speakingHandler = () => {};
 	const progressHandler = () => {
@@ -150,6 +168,11 @@ const Speech = ({ navigation }) => {
 		return questionIndex / totalQuestions;
 		//TODO: Questions that are answered correctly
 	};
+	navigation.addListener("beforeRemove", (e) => {
+		e.preventDefault();
+		setQuitModal(!quitModal);
+		console.log(quitModal);
+	});
 	return (
 		<SafeAreaView>
 			{/* <GoBack goBack={() => navigation.goBack()} /> */}
@@ -317,6 +340,182 @@ const Speech = ({ navigation }) => {
 					response={"best"}
 					y={translateY}
 				/>
+				<View
+					style={{
+						alignItems: "center",
+					}}>
+					<Modal
+						backdropOpacity={0.9}
+						style={{
+							width: "90%",
+							flex: 0,
+
+							alignContent: "center",
+							top: "20%",
+							height: 380,
+							backgroundColor: "#FFF",
+							alignItems: "center",
+							justifyContent: "space-evenly",
+							borderRadius: 10,
+						}}
+						isVisible={rewardModal}>
+						<View
+							style={{
+								backgroundColor: "#F7B686",
+								height: 55,
+								width: "60%",
+								borderRadius: 50,
+								alignItems: "center",
+								justifyContent: "center",
+							}}>
+							<Text
+								style={{
+									fontSize: 22,
+									color: "#FFFFFF",
+									fontFamily: "CorsaGrotesk-Bold",
+								}}>
+								Completed
+							</Text>
+						</View>
+						<View>
+							<Text
+								style={{
+									fontSize: 18,
+									color: "#505050",
+									fontFamily: "CorsaGrotesk-Bold",
+								}}>
+								Chapter 5
+							</Text>
+						</View>
+						<View
+							style={{
+								paddingHorizontal: 30,
+								alignSelf: "center",
+								justifyContent: "center",
+								alignItems: "center",
+							}}>
+							<StarReward stars={2} />
+						</View>
+						<View style={{ flexDirection: "row" }}>
+							<TouchableOpacity
+								activeOpacity={0.9}
+								onPress={() => {
+									setRewardModal(false);
+								}}
+								style={{
+									backgroundColor: "#F7941D",
+									width: 75,
+									alignItems: "center",
+									height: 50,
+									justifyContent: "center",
+									borderRadius: 27,
+									marginRight: 40,
+								}}>
+								<Icon name='repeat' size={30} color={"#FFF"} />
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.9}
+								onPress={() => {
+									navigation.navigate("Chapters");
+								}}
+								style={{
+									backgroundColor: "#F2765A",
+									width: 75,
+									alignItems: "center",
+									height: 50,
+									justifyContent: "center",
+									borderRadius: 27,
+								}}>
+								<Icon name='forward' size={30} color={"#FFF"} />
+							</TouchableOpacity>
+						</View>
+					</Modal>
+					<Modal
+						isVisible={quitModal}
+						onBackdropPress={() => setQuitModal(false)}
+						style={{
+							width: "90%",
+							flex: 0,
+
+							alignContent: "center",
+							top: "30%",
+							height: 250,
+							backgroundColor: "#FFF",
+							alignItems: "center",
+							justifyContent: "space-evenly",
+							borderRadius: 10,
+						}}>
+						<View
+							style={{
+								alignItems: "center",
+							}}>
+							<Text
+								style={{
+									fontFamily: "CorsaGrotesk-Black",
+									fontSize: 18,
+									color: "#505050",
+									marginBottom: 15,
+								}}>
+								Do you really want to quit?
+							</Text>
+							<Text
+								style={{
+									fontFamily: "CorsaGrotesk-Medium",
+									fontSize: 14,
+									color: "#999",
+								}}>
+								If you are tired, you can come back again
+							</Text>
+						</View>
+						<View style={{ flexDirection: "row" }}>
+							<TouchableOpacity
+								activeOpacity={0.9}
+								onPress={() => {
+									setQuitModal(false);
+								}}
+								style={{
+									backgroundColor: "#F7941D",
+									width: 75,
+									alignItems: "center",
+									height: 50,
+									justifyContent: "center",
+									borderRadius: 27,
+									marginRight: 40,
+								}}>
+								<Text
+									style={{
+										fontSize: 16,
+										color: "#FFF",
+										fontFamily: "CorsaGrotesk-Black",
+									}}>
+									Cancel
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.9}
+								onPress={() => {
+									navigation.goBack();
+								}}
+								style={{
+									backgroundColor: "#F2765A",
+									width: 75,
+									alignItems: "center",
+									height: 50,
+									justifyContent: "center",
+									borderRadius: 27,
+								}}>
+								<Text
+									style={{
+										fontSize: 16,
+										color: "#FFF",
+										fontFamily: "CorsaGrotesk-Black",
+									}}>
+									Quit
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</Modal>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
@@ -364,5 +563,51 @@ const AnimatedFeedback = ({ y, text, response }) => {
 	);
 };
 
+const StarReward = ({ stars }) => {
+	const styles = StyleSheet.create({
+		image: {
+			flexDirection: "row",
+			width: "75%",
+			height: 85,
+			justifyContent: "space-between",
+			alignItems: "flex-end",
+		},
+		center: {
+			alignSelf: "flex-start",
+		},
+	});
+	return (
+		<View style={{ alignItems: "center", justifyContent: "center" }}>
+			{stars === 1 ? (
+				<View style={styles.image}>
+					<Image source={require("../../assets/icons/star-filled.png")} />
+					<Image
+						style={styles.center}
+						source={require("../../assets/icons/star-unfilled.png")}
+					/>
+					<Image source={require("../../assets/icons/star-unfilled.png")} />
+				</View>
+			) : stars === 2 ? (
+				<View style={styles.image}>
+					<Image source={require("../../assets/icons/star-filled.png")} />
+					<Image
+						style={styles.center}
+						source={require("../../assets/icons/star-filled.png")}
+					/>
+					<Image source={require("../../assets/icons/star-unfilled.png")} />
+				</View>
+			) : (
+				<View style={styles.image}>
+					<Image source={require("../../assets/icons/star-filled.png")} />
+					<Image
+						style={styles.center}
+						source={require("../../assets/icons/star-filled.png")}
+					/>
+					<Image source={require("../../assets/icons/star-filled.png")} />
+				</View>
+			)}
+		</View>
+	);
+};
 // {questionIndex !== questions.length &&
 // 	questions[questionIndex].word}

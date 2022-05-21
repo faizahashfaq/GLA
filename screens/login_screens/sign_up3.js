@@ -12,71 +12,108 @@ import {
 	TextInput,
 	TouchableOpacity,
 	SafeAreaView,
+	Keyboard,
+	ScrollView,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { color } from "react-native-elements/dist/helpers";
 import GoBack from "../../components/GoBack";
-
+import StyledInput from "../../components/TextInput";
+import {
+	emptyInputValidation,
+	passwordSecurityCheck,
+} from "../../utils/validations";
+import FlashMessage from "react-native-flash-message";
 const { width, height } = Dimensions.get("window");
 
-const SignUP_3 = ({ navigation }) => {
-	const [name, setU_Name] = useState("");
+const SignUP_3 = ({ route, navigation }) => {
+	//Name and Email from previous screen
+	const { name, email } = route.params;
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	let datasaving = {
+		name: name,
+		email: email,
+		password: password,
+	};
+	console.log(datasaving);
+
+	const [imageDisplay, setImageDisplay] = useState({
+		display: "flex",
+		marginTop: 30,
+	});
+	const onPasswordConfirm = () => {
+		if (
+			(emptyInputValidation(password) ||
+				emptyInputValidation(confirmPassword)) &&
+			passwordSecurityCheck(password)
+		) {
+			//TODO: Async Firebase Database Save
+			password === confirmPassword && navigation.navigate("congrats");
+			setPassword("");
+			setConfirmPassword("");
+		} else {
+			console.log("Try again");
+		}
+	};
+	Keyboard.addListener("keyboardDidShow", () => {
+		setImageDisplay({
+			display: "none",
+			marginTop: 0,
+		});
+	});
+	Keyboard.addListener("keyboardDidHide", () => {
+		setImageDisplay({
+			display: "flex",
+			marginTop: 25,
+		});
+	});
 	return (
 		<SafeAreaView>
 			<GoBack goBack={() => navigation.goBack()} />
-
+			<FlashMessage />
 			<View
 				style={{
 					paddingHorizontal: 20,
 					width: width,
-					height: height - 40,
+					height: height,
 					backgroundColor: "#FFF",
 				}}>
-				<View style={{ alignItems: "center", marginTop: 25, marginBottom: 60 }}>
+				<View
+					style={{
+						alignItems: "center",
+						marginTop: imageDisplay.marginTop,
+						marginBottom: 60,
+					}}>
 					<Image
 						resizeMode='cover'
-						style={{ width: 150, height: 150 }}
+						style={{ width: 150, height: 150, display: imageDisplay.display }}
 						source={require("../../assets/images/letter.png")}
 					/>
 				</View>
-				<View style={{ marginTop: 30 }}>
+				<View style={{ marginTop: imageDisplay.marginTop }}>
 					<Text
 						style={{
 							fontSize: 18,
 							color: "#505050",
 							fontFamily: "CorsaGrotesk-Bold",
+							marginBottom: 20,
 						}}>
 						Write the <Text style={{ color: "#F2765A" }}>strong Password</Text>
 					</Text>
-					<TextInput
-						value={name}
-						onChangeText={(text) => setU_Name(text)}
+					<StyledInput
+						value={password}
+						onChangeText={(text) => setPassword(text)}
 						placeholder='Password'
 						placeholderTextColor={"#CCC"}
-						style={{
-							fontFamily: "CorsaGrotesk-Medium",
-							fontSize: 16,
-							height: 60,
-							backgroundColor: "#f0f0f0",
-							borderRadius: 10,
-							paddingHorizontal: 10,
-							marginTop: 25,
-						}}
+						secureTextEntry={true}
 					/>
-					<TextInput
-						value={name}
-						onChangeText={(text) => setU_Name(text)}
+					<StyledInput
+						value={confirmPassword}
+						onChangeText={(text) => setConfirmPassword(text)}
 						placeholder='Confirm Password'
 						placeholderTextColor={"#CCC"}
-						style={{
-							fontFamily: "CorsaGrotesk-Medium",
-							fontSize: 16,
-							height: 60,
-							backgroundColor: "#f0f0f0",
-							borderRadius: 10,
-							paddingHorizontal: 10,
-							marginTop: 25,
-						}}
+						secureTextEntry={true}
 					/>
 				</View>
 				<View>
@@ -95,12 +132,10 @@ const SignUP_3 = ({ navigation }) => {
 						Must contain numbers
 					</Text>
 				</View>
-				<View style={{ bottom: -80 }}>
+				<View style={{ bottom: -60 }}>
 					<TouchableOpacity
 						activeOpacity={0.9}
-						onPress={() => {
-							navigation.navigate("congrats");
-						}}
+						onPress={onPasswordConfirm}
 						style={{
 							alignSelf: "center",
 							alignItems: "center",
@@ -120,7 +155,7 @@ const SignUP_3 = ({ navigation }) => {
 								fontSize: 18,
 								color: "#FFF",
 							}}>
-							Next
+							Confirm
 						</Text>
 					</TouchableOpacity>
 				</View>

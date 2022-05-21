@@ -149,7 +149,7 @@ const Routine = ({ navigation }) => {
 					activeOpacity={0.8}
 					onPress={() => {
 						navigation.navigate("Routine Navigation", {
-							screen: "Routine Parent",
+							screen: "Activities",
 							params: {
 								name: "Activities",
 							},

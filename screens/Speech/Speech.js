@@ -16,41 +16,65 @@ import * as Progress from "react-native-progress";
 import LottieView from "lottie-react-native";
 import GoBack from "../../components/GoBack";
 import { async } from "@firebase/util";
-
+const lettersPath = "../../assets/images/alphabets";
 const questions = [
 	{
 		id: 1,
-		imagePath: "ss",
+		imagePath: `${lettersPath}/letter-a`,
 		word: "A",
 	},
 	{
 		id: 2,
-		imagePath: "ss",
+		imagePath: `${lettersPath}/letter-b`,
 		word: "B",
 	},
 	{
 		id: 3,
-		imagePath: "ss",
+		imagePath: `${lettersPath}/letter-c`,
 		word: "C",
 	},
 	{
 		id: 4,
-		imagePath: "ss",
+		imagePath: `${lettersPath}/letter-d`,
 		word: "D",
 	},
 	{
 		id: 5,
-		imagePath: "ss",
+		imagePath: `${lettersPath}/letter-e`,
 		word: "E",
 	},
 ];
+
+const recordingOptions = {
+	android: {
+		extension: ".wav",
+		outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+		audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+		sampleRate: 44100,
+		numberOfChannels: 1,
+		bitRate: 128000,
+	},
+	ios: {
+		extension: ".wav",
+		audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+		sampleRate: 44100,
+		numberOfChannels: 1,
+		bitRate: 128000,
+		linearPCMBitDepth: 16,
+		linearPCMIsBigEndian: false,
+		linearPCMIsFloat: false,
+	},
+};
 const { width, height } = Dimensions.get("window");
 const Speech = ({ navigation }) => {
 	const [currentWord, setCurrentWord] = useState(questions[0].word);
 	const [listening, setListening] = useState(false);
+	const [recording, setRecording] = useState(false);
+	const [record, setRecord] = useState(null);
 	const [progress, setProgress] = useState(0);
 	const [questionIndex, setQuestionIndex] = useState(0);
 	const translateY = useRef(new Animated.Value(200)).current;
+
 	const animation = () => {
 		Animated.timing(translateY, {
 			toValue: 0,
@@ -67,7 +91,6 @@ const Speech = ({ navigation }) => {
 		setListening(!listening);
 		if (listening === true) {
 			console.log(`Listnening: ${listening}`);
-			startRecording();
 			setQuestionIndex((index) => questions.length !== index && index + 1);
 
 			setCurrentWord(questions[questionIndex].word);
@@ -75,10 +98,52 @@ const Speech = ({ navigation }) => {
 			animation();
 		}
 	};
-	const startRecording = async () => {
-		const { status } = await Audio.requestPermissionsAsync();
-		console.log(status);
-	};
+	async function startRecording() {
+		try {
+			console.log("Requesting permissions..");
+			await Audio.requestPermissionsAsync();
+			await Audio.setAudioModeAsync({
+				allowsRecordingIOS: true,
+				playsInSilentModeIOS: true,
+			});
+			console.log("Starting recording..");
+			const { recording } = await Audio.Recording.createAsync(recordingOptions);
+			setRecording(recording);
+			console.log("Recording started");
+		} catch (err) {
+			console.error("Failed to start recording", err);
+		}
+	}
+	const [sound, setSound] = React.useState();
+
+	async function playSound(uri) {
+		console.log("Loading Sound");
+		const { sound } = await Audio.Sound.createAsync({
+			uri: uri,
+		});
+		setSound(sound);
+
+		console.log("Playing Sound");
+		await sound.playAsync();
+	}
+
+	React.useEffect(() => {
+		return sound
+			? () => {
+					console.log("Unloading Sound");
+					sound.unloadAsync();
+			  }
+			: undefined;
+	}, [sound]);
+
+	async function stopRecording() {
+		console.log("Stopping recording..");
+		setRecording(false);
+		await recording.stopAndUnloadAsync();
+		const uri = recording.getURI();
+		console.log("Recording stopped and stored at", uri);
+		playSound(uri);
+	}
 	const speakingHandler = () => {};
 	const progressHandler = () => {
 		const totalQuestions = questions.length;
@@ -152,12 +217,20 @@ const Speech = ({ navigation }) => {
 							elevation: 5,
 							marginTop: 20,
 							marginBottom: 20,
+							alignItems: "center",
+							justifyContent: "center",
 						}}>
 						{/* Content Here */}
-						<Text>
-							{questionIndex !== questions.length &&
-								questions[questionIndex].word}
-						</Text>
+
+						<Image
+							resizeMethod='scale'
+							resizeMode='cover'
+							style={{
+								width: 140,
+								height: 140,
+							}}
+							source={require("../../assets/images/alphabets/letter-c.png")}
+						/>
 					</View>
 				</View>
 				<View style={{ flexDirection: "row", justifyContent: "center" }}>
@@ -200,7 +273,10 @@ const Speech = ({ navigation }) => {
 							alignItems: "center",
 						}}>
 						<TouchableOpacity
-							onPress={speechHandler}
+							activeOpacity={1}
+							//onPress={speechHandler}
+							onPressIn={startRecording}
+							onPressOut={stopRecording}
 							style={{
 								width: 60,
 								height: 60,
@@ -209,7 +285,7 @@ const Speech = ({ navigation }) => {
 								alignItems: "center",
 								justifyContent: "center",
 							}}>
-							{listening ? (
+							{recording ? (
 								<LottieView
 									source={require("../../assets/animations/listening.json")}
 									autoPlay
@@ -287,3 +363,6 @@ const AnimatedFeedback = ({ y, text, response }) => {
 		</Animated.View>
 	);
 };
+
+// {questionIndex !== questions.length &&
+// 	questions[questionIndex].word}

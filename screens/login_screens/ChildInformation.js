@@ -10,6 +10,9 @@ import {
 	TextInput,
 	Dimensions,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
+import { emptyInputValidation } from "../../utils/validations";
 
 const { width, height } = Dimensions.get("window");
 const ChildInformation = ({ navigation }) => {
@@ -17,7 +20,25 @@ const ChildInformation = ({ navigation }) => {
 		boy: false,
 		girl: false,
 	});
+	const [nickname, SetNickname] = useState("");
+	const [date, setDate] = useState(moment().format("DD MMM, YYYY"));
+	const [show, setShow] = useState(false);
+	const [mode, setMode] = useState("date");
+	console.log(date);
+	const showMode = (currentMode) => {
+		setShow(true);
+		setMode(currentMode);
+	};
+	const showDatepicker = () => {
+		showMode("date");
+	};
 
+	const onChangeDate = (event, selectedDate) => {
+		const currentDate = selectedDate || date;
+
+		setShow(Platform.OS === "ios");
+		setDate(moment(currentDate).format("MMMM DD, YYYY"));
+	};
 	return (
 		<SafeAreaView>
 			<View
@@ -121,6 +142,8 @@ const ChildInformation = ({ navigation }) => {
 						Child's Name
 					</Text>
 					<TextInput
+						value={nickname}
+						onChangeText={(text) => SetNickname(text)}
 						placeholder='Nickname'
 						style={{
 							width: 200,
@@ -146,26 +169,36 @@ const ChildInformation = ({ navigation }) => {
 							color: "#505050",
 							fontSize: 14,
 						}}>
-						Age
+						Date of Birth
 					</Text>
-					<TextInput
-						keyboardType='numeric'
-						placeholder='e.g 6'
+					<TouchableOpacity
+						onPress={showDatepicker}
 						style={{
 							width: 200,
 							height: 50,
 							backgroundColor: "#EAEAEA",
 							borderRadius: 10,
-							fontFamily: "CorsaGrotesk-Regular",
+							justifyContent: "center",
 							paddingHorizontal: 10,
-						}}
-					/>
+						}}>
+						<Text
+							style={{
+								fontFamily: "CorsaGrotesk-Regular",
+								alignItems: "center",
+							}}>
+							{date}
+						</Text>
+					</TouchableOpacity>
 				</View>
 				<View style={{ bottom: -70 }}>
 					<TouchableOpacity
 						activeOpacity={0.9}
 						onPress={() => {
-							navigation.navigate("questionaire");
+							if (checked.boy || checked.girl) {
+								if (emptyInputValidation(nickname)) {
+									navigation.navigate("questionaire");
+								}
+							}
 						}}
 						style={{
 							alignSelf: "center",
@@ -190,6 +223,21 @@ const ChildInformation = ({ navigation }) => {
 						</Text>
 					</TouchableOpacity>
 				</View>
+				{show && (
+					<View>
+						<DateTimePicker
+							style={{
+								borderRadius: 0,
+							}}
+							testID='dateTimePicker'
+							value={new Date(date)}
+							mode={mode}
+							is24Hour={false}
+							display='default'
+							onChange={onChangeDate}
+						/>
+					</View>
+				)}
 			</View>
 		</SafeAreaView>
 	);

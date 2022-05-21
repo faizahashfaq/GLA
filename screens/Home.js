@@ -10,6 +10,7 @@ import {
 	StyleSheet,
 	Image,
 } from "react-native";
+import CountDown from "react-native-countdown-component";
 import LottieView from "lottie-react-native";
 import Rocket from "../assets/images/Rocket";
 import { TouchableCards } from "../components/TouchableCards";
@@ -38,19 +39,19 @@ const styles = StyleSheet.create({
 
 const Home = ({ user = "Saira", navigation }) => {
 	const [levels, setLevels] = React.useState([]);
-	async function getLevels() {
-		const snapResult = [];
-		const querySnapshot = await firebase
-			.firestore()
-			.collection("guardians")
-			.where("Email", "==", "abcd123")
-			.get();
-		querySnapshot.forEach((doc) => snapResult.push(doc.data()));
-		setLevels([...snapResult]);
-	}
-	useEffect(() => {
-		getLevels();
-	}, []);
+	// async function getLevels() {
+	// 	const snapResult = [];
+	// 	const querySnapshot = await firebase
+	// 		.firestore()
+	// 		.collection("guardians")
+	// 		.where("Email", "==", "abcd123")
+	// 		.get();
+	// 	querySnapshot.forEach((doc) => snapResult.push(doc.data()));
+	// 	setLevels([...snapResult]);
+	// }
+	// useEffect(() => {
+	// 	getLevels();
+	// }, []);
 	console.log(levels);
 	return (
 		<SafeAreaView>
@@ -73,7 +74,7 @@ const Home = ({ user = "Saira", navigation }) => {
 				<DailyChallengeCard
 					onPress={() => {
 						navigation.navigate("Gamification", {
-							screen: "Reward",
+							screen: "Daily Challenges",
 						});
 					}}
 				/>
@@ -265,14 +266,26 @@ const RoutineCard = () => {
 						alignItems: "center",
 						justifyContent: "center",
 					}}>
-					<Text
-						style={{
+					<CountDown
+						until={1000}
+						onFinish={() => {
+							//TODO: Send a push notification with routine details
+							return null;
+						}}
+						digitStyle={{
+							backgroundColor: "#FFF",
+						}}
+						digitTxtStyle={{
 							color: "#F2765A",
-							fontSize: 24,
 							fontFamily: "CorsaGrotesk-Bold",
-						}}>
-						12:02:15
-					</Text>
+							fontSize: 20,
+						}}
+						separatorStyle={{ color: "#F2765A" }}
+						timeToShow={["H", "M", "S"]}
+						timeLabels={{ m: null, s: null }}
+						showSeparator
+						style={{}}
+					/>
 				</View>
 			</View>
 		</TouchableCards>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { TouchableOpacity, Text, Image } from "react-native";
-const Stars = ({ stars = "167" }) => {
+const Stars = ({ stars }) => {
 	return (
 		<TouchableOpacity
 			activeOpacity={1}
@@ -27,7 +27,7 @@ const Stars = ({ stars = "167" }) => {
 			</Text>
 			<Image
 				style={{ width: 20, height: 20, marginLeft: 10 }}
-				resizeMode="contain"
+				resizeMode='contain'
 				source={require("../assets/icons/star.png")}
 			/>
 		</TouchableOpacity>

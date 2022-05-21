@@ -13,22 +13,44 @@ import {
 	ScrollView,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import FlashMessage, {
+	showMessage,
+	hideMessage,
+} from "react-native-flash-message";
 import { GlobalContext } from "../../context/GlobalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ArrowIcon from "../../assets/icons/RightArrowIcon";
-
+import { emailValidation, emptyInputValidation } from "../../utils/validations";
+import StyledInput from "../../components/TextInput";
 const { width, height } = Dimensions.get("window");
 const App = ({ navigation }) => {
-	const context = useContext(GlobalContext);
-	const [email, setU_Name] = useState("");
+	const { isLoggedIn, setIsLoggedIn } = useContext(GlobalContext);
+	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	// const setter = async () => {
-	// 	const loginStatus = await AsyncStorage.setItem('@isLoggedIn', isLoggedIn)
-	// 	return loginStatus
-	// }
+
+	const onLoginHandler = async () => {
+		try {
+			if (
+				(emptyInputValidation(email) || emptyInputValidation(password)) &&
+				emailValidation(email)
+			)
+				if (email === "admin@app.com" && password === "admin") {
+					await AsyncStorage.setItem("@isLoggedIn", "1");
+					setIsLoggedIn("1");
+				} else if (email !== "admin" || password !== "admin") {
+					showMessage({
+						message: "Incorrect email or password!",
+						type: "danger",
+					});
+				}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
+			<FlashMessage position={"top"} autoHide />
 			<View style={{ alignItems: "center", marginBottom: 60 }}>
 				<Image
 					resizeMode='cover'
@@ -37,8 +59,19 @@ const App = ({ navigation }) => {
 				/>
 			</View>
 			<KeyboardAwareScrollView>
-				<TextInput placeholder='Username or Email' style={styles.textInput} />
-				<TextInput placeholder='Password' style={styles.textInput} />
+				<StyledInput
+					placeholder='Email'
+					keyboardType='email-address'
+					value={email}
+					onChangeText={(text) => setEmail(text)}
+				/>
+				<StyledInput
+					secureTextEntry={true}
+					placeholder='Password'
+					value={password}
+					onChangeText={(text) => setPassword(text)}
+				/>
+
 				<TouchableOpacity style={{ alignItems: "flex-end" }}>
 					<Text style={{ color: "#F17559", fontFamily: "CorsaGrotesk-Medium" }}>
 						Forgot Password?
@@ -48,7 +81,9 @@ const App = ({ navigation }) => {
 			<KeyboardAwareScrollView style={{ marginTop: 80 }}>
 				<TouchableOpacity
 					activeOpacity={0.9}
-					onPress={() => {}}
+					onPress={() => {
+						onLoginHandler();
+					}}
 					style={{
 						alignSelf: "center",
 						alignItems: "center",
@@ -77,7 +112,7 @@ const App = ({ navigation }) => {
 						marginTop: 10,
 					}}>
 					<Text style={{ fontFamily: "CorsaGrotesk-Regular" }}>
-						New to GLA?{" "}
+						New to GLA?
 					</Text>
 					<TouchableOpacity
 						activeOpacity={0.9}

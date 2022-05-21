@@ -12,6 +12,7 @@ import {
 	FlatList,
 	SafeAreaView,
 } from "react-native";
+import moment from "moment";
 import RoutineIcon from "../../assets/icons/RoutineIcon";
 import GoBack from "../../components/GoBack";
 const { width, height } = Dimensions.get("window");
@@ -80,7 +81,7 @@ const RoutineCard = ({ imageUri, title, time }) => {
 						width: width / 2.5,
 						height: height / 4,
 					}}
-					resizeMode="contain"
+					resizeMode='contain'
 					source={{
 						uri: imageUri,
 					}}
@@ -110,7 +111,7 @@ const RoutineCard = ({ imageUri, title, time }) => {
 						width: width / 9.5,
 						height: height / 16,
 					}}
-					resizeMode="contain"
+					resizeMode='contain'
 					source={require("../../assets/images/alarm-clock.png")}
 				/>
 
@@ -144,7 +145,7 @@ function DataAndStreak() {
 					color: "#505050",
 					letterSpacing: 0.7,
 				}}>
-				Thursday 23, 2022
+				{moment().format("MMMM DD, YYYY")}
 			</Text>
 			<View
 				style={{

@@ -20,7 +20,7 @@ const GlobalNavigation = () => {
 		<NavigationContainer>
 			<StatusBar />
 
-			<Stack.Navigator>
+			<Stack.Navigator id='Parent'>
 				{!isLoggedIn ? (
 					<Stack.Screen
 						name='Startup'

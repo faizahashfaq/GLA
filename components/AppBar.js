@@ -1,12 +1,13 @@
 /** @format */
 
-import React from "react";
+import React, { useContext } from "react";
 import { View, TouchableOpacity, Text, Image } from "react-native";
 import StreakIcon from "../assets/icons/StreakIcon";
 import BadgeIcon from "../assets/icons/BadgeIcon";
 import Stars from "./Stars";
-
+import { GlobalContext } from "../context/GlobalContext";
 const AppBar = ({ navigation }) => {
+	const { allStars } = useContext(GlobalContext);
 	return (
 		<View
 			style={{
@@ -33,7 +34,7 @@ const AppBar = ({ navigation }) => {
 				</TouchableOpacity>
 			</View>
 			<View>
-				<Stars />
+				<Stars stars={allStars} />
 			</View>
 		</View>
 	);

@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
 	View,
 	Text,
@@ -9,10 +9,12 @@ import {
 	ScrollView,
 	Dimensions,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import GoBack from "../../components/GoBack";
 const { width, height } = Dimensions.get("window");
-
+import { GlobalContext } from "../../context/GlobalContext";
 const Questionaire = ({ navigation }) => {
+	const { setIsLoggedIn } = useContext(GlobalContext);
 	const [oneWord, setOneWord] = useState({
 		never: false,
 		rarely: false,
@@ -25,7 +27,40 @@ const Questionaire = ({ navigation }) => {
 		occasionally: false,
 		frequently: false,
 	});
+	const [levelDifficulty, setLevelDifficulty] = useState(1);
+	const difficultyRules = () => {
+		if (
+			(twoWords.occasionally && threeWords.rarely) ||
+			twoWords.frequently ||
+			threeWords.rarely
+		) {
+			setLevelDifficulty(2);
+		} else if (
+			twoWords.frequently &&
+			threeWords.occasionally &&
+			oneWord.frequently
+		) {
+			setLevelDifficulty(3);
+		} else if (
+			twoWords.frequently &&
+			threeWords.frequently &&
+			oneWord.frequently
+		) {
+			setLevelDifficulty(4);
+		} else {
+			setLevelDifficulty(1);
+		}
+	};
+	const analysingDifficulty = async () => {
+		//TODO:Send data to firebase
 
+		difficultyRules();
+		// console.log(levelDifficulty);
+	};
+	const loginLocalStorage = async () => {
+		await AsyncStorage.setItem("@isLoggedIn", "1");
+		setIsLoggedIn("1");
+	};
 	const [threeWords, setThreeWords] = useState({
 		never: false,
 		rarely: false,
@@ -50,6 +85,7 @@ const Questionaire = ({ navigation }) => {
 		occasionally: false,
 		frequently: false,
 	});
+
 	return (
 		<SafeAreaView>
 			<GoBack />
@@ -449,7 +485,13 @@ const Questionaire = ({ navigation }) => {
 					<TouchableOpacity
 						activeOpacity={0.9}
 						onPress={() => {
-							navigation.navigate("questionaire");
+							analysingDifficulty();
+
+							setIsLoggedIn("1");
+
+							// navigation.navigate("Bottom Navigation", {
+							// 	screen: "Home",
+							// });
 						}}
 						style={{
 							alignSelf: "center",

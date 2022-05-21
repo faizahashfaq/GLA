@@ -13,7 +13,8 @@ import Icon from "react-native-vector-icons/Entypo";
 import LottieView from "lottie-react-native";
 
 const { width, height } = Dimensions.get("window");
-const AchievementReward = () => {
+const AchievementReward = ({ route, navigation }) => {
+	const { awardName } = route.params;
 	return (
 		<SafeAreaView>
 			<View
@@ -29,6 +30,7 @@ const AchievementReward = () => {
 				}}>
 				<TouchableOpacity
 					activeOpacity={1}
+					onPress={() => navigation.goBack()}
 					style={{
 						alignSelf: "flex-end",
 						flexDirection: "row",
@@ -57,7 +59,11 @@ const AchievementReward = () => {
 							textAlign: "center",
 							alignSelf: "center",
 						}}>
-						You have won the rocket award for your momentum
+						You have won the{" "}
+						<Text style={{ fontFamily: "CorsaGrotesk-Bold" }}>
+							{awardName} {"award "}
+						</Text>
+						for your momentum
 					</Text>
 				</View>
 				<View style={{ position: "relative", alignSelf: "center" }}>
@@ -89,7 +95,9 @@ const AchievementReward = () => {
 					<TouchableOpacity
 						activeOpacity={0.9}
 						onPress={() => {
-							navigation.navigate("questionaire");
+							navigation.navigate("Mission", {
+								claimed: true,
+							});
 						}}
 						style={{
 							alignSelf: "center",

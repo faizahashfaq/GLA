@@ -95,7 +95,7 @@ async function getStudents(user) {
 //**********************************************************************//
 //******************** function to add new student ********************//
 //**********************************************************************//
-async function addStudent(userID, student, questionare, levelList) {
+async function addStudent(userID, student, questionare, difficulty) {
   const db = firebase.firestore();
   // start batch
   const batch = db.batch();
@@ -138,31 +138,32 @@ async function addStudent(userID, student, questionare, levelList) {
   console.log("Report Added ", reportRef.id);
 
   // add levels for students
-  const assignedLevelsRef = db
+  var assignedLevelsRef = db
     .collection("reports")
     .doc(studentID)
     .collection("assigned-levels");
-
-  levelList.forEach((level) => {
-    const levelRef = db.collection("levels").doc(level);
-    try {
-      // get level details
-      db.runTransaction(async (t) => {
-        const doc = await t.get(levelRef);
+  const levelRef = db
+    .collection("levels")
+    .where("Difficulty", "==", difficulty);
+  try {
+    // get level details
+    db.runTransaction(async (t) => {
+      const doc = await t.get(levelRef);
+      levelRef.forEach((level) => {
         // set level for student
-        assignedLevelsRef.doc(level);
+        assignedLevelsRef.doc(level.id);
         t.set(assignedLevelsRef, {
           CompletedChapters: [],
           CompletionTime: [],
-          CurrentChapter: doc.data().ChapterList[0],
+          CurrentChapter: level.data().ChapterList[0],
         });
       });
+    });
 
-      console.log("Level Added!");
-    } catch (e) {
-      console.log("Level failure:", e);
-    }
-  });
+    console.log("Level Added!");
+  } catch (e) {
+    console.log("Level failure:", e);
+  }
 
   // add student to the 'guardian'
   const guardianRef = db.collection("guardians").doc(userID);

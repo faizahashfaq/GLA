@@ -2,22 +2,20 @@
 
 import React from "react";
 
-class RoutineClass {
+class AchievementClass {
   constructor(
     id = null,
     name = null,
     description = null,
-    startTime = null,
-    repeat = null,
-    assetPic = null
+    chaptersToComplete = null,
+    media = null
   ) {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.startTime = startTime;
-    this.repeat = repeat;
-    this.assetPic = assetPic;
+    this.ChaptersToComplete = chaptersToComplete;
+    this.Media = media;
   }
 }
 
-export default RoutineClass;
+export default AchievementClass;

@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	SafeAreaView,
 	ScrollView,
@@ -15,6 +15,12 @@ import { TouchableCards } from "../../components/TouchableCards";
 import AppBar from "../../components/AppBar";
 import BookImage from "../../assets/images/BookImage";
 import ArrowIcon from "../../assets/icons/RightArrowIcon";
+import {
+	viewCurrentRoutine,
+	viewRoutines,
+} from "../../utils/APIs/FirebaseFunctions";
+import { GlobalContext } from "../../context/GlobalContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -25,6 +31,27 @@ const styles = StyleSheet.create({
 });
 
 const Routine = ({ navigation }) => {
+	const { studentState } = useContext(GlobalContext);
+	const [studentId, setStudentId] = useState("");
+	const [routine, setRoutine] = useState({});
+
+	useEffect(() => {
+		async function getStudentId() {
+			try {
+				const id = await AsyncStorage.getItem("@studentId");
+				setStudentId(JSON.parse(id)[0]);
+				console.log(studentId);
+				await viewRoutines(studentId);
+				const currentRoutine = await viewCurrentRoutine(studentId);
+				setRoutine(currentRoutine[0]);
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		getStudentId();
+		console.log(`Routine on Screen\n${routine}`);
+	}, [studentId]);
 	return (
 		<SafeAreaView>
 			<AppBar navigation={navigation} />
@@ -149,7 +176,7 @@ const Routine = ({ navigation }) => {
 					activeOpacity={0.8}
 					onPress={() => {
 						navigation.navigate("Routine Navigation", {
-							screen: "Routine Parent",
+							screen: "Activities",
 							params: {
 								name: "Activities",
 							},

@@ -1,13 +1,13 @@
 /** @format */
-
+import React from "react";
 import { View, TouchableOpacity, Text, Dimensions } from "react-native";
 import LeftArrow from "../assets/icons/LeftArrow";
 import Stars from "./Stars";
-import { GlobalContext, GlobalProvider }  from '../context/GlobalContext'
+import { GlobalContext, GlobalProvider } from "../context/GlobalContext";
 import { useContext } from "react";
 export default function GoBack({ routeName, goBack }) {
 	const { width } = Dimensions.get("window");
-	const {isLoggedIn} = useContext(GlobalContext)
+	const { isLoggedIn, allStars } = useContext(GlobalContext);
 	return (
 		<View
 			style={{
@@ -40,7 +40,7 @@ export default function GoBack({ routeName, goBack }) {
 				}}>
 				{routeName}
 			</Text>
-			{isLoggedIn? <Stars /> : <View></View>}
+			{isLoggedIn ? <Stars stars={allStars} /> : <View></View>}
 		</View>
 	);
 }

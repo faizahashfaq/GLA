@@ -1,0 +1,39 @@
+{
+	"project_info": {
+		"project_number": "156472750624",
+		"project_id": "glapp-43f53",
+		"storage_bucket": "glapp-43f53.appspot.com"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:156472750624:android:a5ecdac4fdbc4f31690245",
+				"android_client_info": {
+					"package_name": "learning.gla"
+				}
+			},
+			"oauth_client": [
+				{
+					"client_id": "156472750624-4sh8tf6ujru80ooqu0m2isnum69a3049.apps.googleusercontent.com",
+					"client_type": 3
+				}
+			],
+			"api_key": [
+				{
+					"current_key": "AIzaSyCUW4I7Y8kSaJnhn2Ftr9DwMYgNYMz5n8Q"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": [
+						{
+							"client_id": "156472750624-4sh8tf6ujru80ooqu0m2isnum69a3049.apps.googleusercontent.com",
+							"client_type": 3
+						}
+					]
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
+}

@@ -10,6 +10,7 @@ import {
 	Text,
 	TouchableOpacity,
 } from "react-native";
+
 import {
 	responsiveHeight,
 	responsiveWidth,

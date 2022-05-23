@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Text,
 	TouchableOpacity,
@@ -12,14 +12,31 @@ import {
 	FlatList,
 	SafeAreaView,
 } from "react-native";
+import moment from "moment";
 import RoutineIcon from "../../assets/icons/RoutineIcon";
 import GoBack from "../../components/GoBack";
+import { viewRoutines } from "../../utils/APIs/FirebaseFunctions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 
 const PlannedRoutine = ({ navigation, route }) => {
 	const { name } = route.params;
-	const array = [1, 2, 3, 4, 5];
-	const renderItem = ({ item }) => <RoutineCard />;
+	const [routines, setRoutines] = useState([]);
+	const renderItem = ({ item }) => (
+		<RoutineCard
+			title={item["Name"]}
+			time={item["TimeAM_PM"].toUpperCase()}
+			imageUri={item["AssetID"][0]["uri"]}
+		/>
+	);
+	const getIdAndViewRoutine = async () => {
+		const studentId = await AsyncStorage.getItem("@studentId");
+		const routines = await viewRoutines(JSON.parse(studentId)[0]);
+		setRoutines(routines);
+	};
+	useEffect(() => {
+		getIdAndViewRoutine();
+	}, []);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
@@ -33,9 +50,9 @@ const PlannedRoutine = ({ navigation, route }) => {
 				}}
 				contentContainerStyle={{ flexGrow: 1 }}
 				style={{ padding: 20 }}
-				data={array}
+				data={routines}
 				renderItem={renderItem}
-				keyExtractor={(array) => array}
+				keyExtractor={() => Math.random() * 100}
 			/>
 		</SafeAreaView>
 	);
@@ -80,7 +97,7 @@ const RoutineCard = ({ imageUri, title, time }) => {
 						width: width / 2.5,
 						height: height / 4,
 					}}
-					resizeMode="contain"
+					resizeMode='contain'
 					source={{
 						uri: imageUri,
 					}}
@@ -110,7 +127,7 @@ const RoutineCard = ({ imageUri, title, time }) => {
 						width: width / 9.5,
 						height: height / 16,
 					}}
-					resizeMode="contain"
+					resizeMode='contain'
 					source={require("../../assets/images/alarm-clock.png")}
 				/>
 
@@ -144,7 +161,7 @@ function DataAndStreak() {
 					color: "#505050",
 					letterSpacing: 0.7,
 				}}>
-				Thursday 23, 2022
+				{moment().format("MMMM DD, YYYY")}
 			</Text>
 			<View
 				style={{

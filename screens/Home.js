@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	SafeAreaView,
 	Text,
@@ -10,11 +10,17 @@ import {
 	StyleSheet,
 	Image,
 } from "react-native";
+import * as Notifications from "expo-notifications";
+
+import CountDown from "react-native-countdown-component";
 import LottieView from "lottie-react-native";
 import Rocket from "../assets/images/Rocket";
 import { TouchableCards } from "../components/TouchableCards";
 import AppBar from "../components/AppBar";
 import firebase from "../utils/firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GlobalContext } from "../context/GlobalContext";
+import { viewCurrentRoutine } from "../utils/APIs/FirebaseFunctions";
 
 // Current Width & Height of the screen
 const { width, height } = Dimensions.get("window");
@@ -38,20 +44,30 @@ const styles = StyleSheet.create({
 
 const Home = ({ user = "Saira", navigation }) => {
 	const [levels, setLevels] = React.useState([]);
-	async function getLevels() {
-		const snapResult = [];
-		const querySnapshot = await firebase
-			.firestore()
-			.collection("guardians")
-			.where("Email", "==", "abcd123")
-			.get();
-		querySnapshot.forEach((doc) => snapResult.push(doc.data()));
-		setLevels([...snapResult]);
-	}
+	const { studentState } = useContext(GlobalContext);
+	// async function getLevels() {
+	// 	const snapResult = [];
+	// 	const querySnapshot = await firebase
+	// 		.firestore()
+	// 		.collection("guardians")
+	// 		.where("Email", "==", "abcd123")
+	// 		.get();
+	// 	querySnapshot.forEach((doc) => snapResult.push(doc.data()));
+	// 	setLevels([...snapResult]);
+	// }
+	// useEffect(() => {
+	// 	getLevels();
+	// }, []);
 	useEffect(() => {
-		getLevels();
+		//console.log(`Hello ${studentState}`);
+
+		async function userLocal() {
+			await AsyncStorage.getAllKeys((err, res) => {
+				console.log(res);
+			});
+		}
+		userLocal();
 	}, []);
-	console.log(levels);
 	return (
 		<SafeAreaView>
 			<AppBar navigation={navigation} />
@@ -73,7 +89,7 @@ const Home = ({ user = "Saira", navigation }) => {
 				<DailyChallengeCard
 					onPress={() => {
 						navigation.navigate("Gamification", {
-							screen: "Reward",
+							screen: "Daily Challenges",
 						});
 					}}
 				/>
@@ -227,6 +243,63 @@ export const DailyChallengeCard = ({ ...props }) => {
 };
 
 const RoutineCard = () => {
+	const [token, setToken] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [routine, setRoutine] = useState({});
+	const [countdown, setCountDown] = useState(0);
+	const [countdownId, setCountdownId] = useState("undefined");
+	const SECRET_KEY =
+		"AAAAJG6AsiA:APA91bGx19XgIVCeSztSp71zn0k_b9XNs15ssvbvMUQDaKP5LgHhs0pQ7V0SNZC4qKZcr7weVtr8e5M6WA7KEPFcAWIpJy8VHs5vyMbeXqzhfXcADJ-Kb3GIPGZ96QNiYe_yJBd9HiRC";
+
+	async function getCurrentRoutine() {
+		try {
+			const id = await AsyncStorage.getItem("@studentId");
+			//setStudentId(JSON.parse(id)[0]);
+			//console.log(`Student ID:${studentId}`);
+			//await viewRoutines(studentId);
+			const currentRoutine = await viewCurrentRoutine(JSON.parse(id)[0]);
+
+			setRoutine(currentRoutine[0]);
+			setCountDown(currentRoutine[0]["StartTime"]);
+
+			setLoading(true);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	const sendNotification = async () => {
+		const tokenDevice = (await Notifications.getDevicePushTokenAsync()).data;
+		setToken(tokenDevice);
+
+		await fetch(
+			"https://fcm.googleapis.com/v1/projects/project-156472750624/messages:send",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `key=${SECRET_KEY}`,
+				},
+				body: JSON.stringify({
+					to: token,
+					priority: "normal",
+					data: {
+						experienceId: "@huzaifastudios/fyp-gla",
+						scopeKey: "@huzaifastudios/fyp-gla",
+						title: "\uD83D\uDCE7 You've got mail",
+						message: "Hello world! \uD83C\uDF10",
+					},
+				}),
+			}
+		).catch((err) => console.log(err));
+	};
+	useEffect(() => {
+		getCurrentRoutine();
+	}, []);
+	useEffect(() => {
+		console.log(`Countdown: ${countdown}`);
+		console.log(routine);
+		setCountdownId("989389");
+	}, [countdown]);
 	return (
 		<TouchableCards
 			color='#3C67FF'
@@ -253,7 +326,7 @@ const RoutineCard = () => {
 						fontSize: 14,
 						fontFamily: "CorsaGrotesk-Regular",
 					}}>
-					Going to sleep
+					{loading ? routine["Name"] : "Loading..."}
 				</Text>
 				<Image source={require("../assets/images/sleeping.png")} />
 				<View
@@ -265,14 +338,27 @@ const RoutineCard = () => {
 						alignItems: "center",
 						justifyContent: "center",
 					}}>
-					<Text
-						style={{
+					<CountDown
+						until={
+							loading ? Math.round(countdown) - new Date().getTime() / 1000 : 0
+						}
+						id={countdownId}
+						onFinish={() => {
+							sendNotification();
+						}}
+						digitStyle={{
+							backgroundColor: "#FFF",
+						}}
+						digitTxtStyle={{
 							color: "#F2765A",
-							fontSize: 24,
 							fontFamily: "CorsaGrotesk-Bold",
-						}}>
-						12:02:15
-					</Text>
+							fontSize: 20,
+						}}
+						separatorStyle={{ color: "#F2765A" }}
+						timeToShow={["H", "M", "S"]}
+						timeLabels={{ m: null, s: null }}
+						showSeparator
+					/>
 				</View>
 			</View>
 		</TouchableCards>

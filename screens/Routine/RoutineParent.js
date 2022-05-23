@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
 	SafeAreaView,
 	ScrollView,
@@ -16,15 +16,18 @@ import {
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import GoBack from "../../components/GoBack";
 import moment from "moment";
 import ArrowUp from "../../assets/icons/ArrowUp";
 import ArrowDown from "../../assets/icons/ArrowDown";
 import { CheckedBox } from "../login_screens/Questionaire";
-
+import { addRoutine } from "../../utils/APIs/FirebaseFunctions";
+import { GlobalContext } from "../../context/GlobalContext";
 const { width, height } = Dimensions.get("window");
 const RoutineParent = ({ navigation }) => {
+	const { studentState, setStudentState } = useContext(GlobalContext);
 	const [date, setDate] = useState(moment());
 	const [time, setTime] = useState(moment());
 	const [mode, setMode] = useState("date");
@@ -42,6 +45,26 @@ const RoutineParent = ({ navigation }) => {
 		monthly: false,
 	});
 	const [image, setImage] = useState([]);
+	console.log(time, date);
+	const routine = {
+		name: text,
+		description: "",
+		startTime:
+			new Date(date).getTime() / 1000 || new Date(time).getTime() / 1000,
+		assetID: image,
+		repeat: routineRepeat,
+		time: formatAMPM(new Date(time)),
+	};
+	function formatAMPM(date) {
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var ampm = hours >= 12 ? "pm" : "am";
+		hours = hours % 12;
+		hours = hours ? hours : 12; // the hour '0' should be '12'
+		minutes = minutes < 10 ? "0" + minutes : minutes;
+		var strTime = hours + ":" + minutes + " " + ampm;
+		return strTime;
+	}
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
@@ -59,7 +82,6 @@ const RoutineParent = ({ navigation }) => {
 	};
 	// console.log(date.calendar("yyyy/mm/dd"));
 	// console.log(date.format("h:mm a"));
-	console.log(text);
 	const onChange = (event, selectedDate) => {
 		const currentDate = selectedDate || date;
 
@@ -81,6 +103,14 @@ const RoutineParent = ({ navigation }) => {
 		showMode("time");
 	};
 
+	useEffect(() => {
+		async function localStudentId() {
+			const studentId = await AsyncStorage.getItem("@studentId");
+			setStudentState(JSON.parse(studentId)[0]);
+			console.log(JSON.parse(studentId)[0]);
+		}
+		localStudentId();
+	});
 	return (
 		<SafeAreaView style={{ position: "relative", flex: 1 }}>
 			<GoBack routeName={"Routine"} goBack={() => navigation.goBack()} />
@@ -391,7 +421,8 @@ const RoutineParent = ({ navigation }) => {
 				<TouchableOpacity
 					activeOpacity={0.9}
 					onPress={() => {
-						console.log("Routine Uploaded");
+						console.log(`Upload ${studentState}`);
+						addRoutine(studentState, routine);
 					}}
 					style={{
 						alignSelf: "center",

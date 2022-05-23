@@ -1,5 +1,5 @@
 /** @format */
-
+import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Text } from "react-native";
 import Profile from "../screens/Profile";
@@ -16,12 +16,12 @@ const Tab = createMaterialBottomTabNavigator();
 function BottomNavigation() {
 	return (
 		<Tab.Navigator
-			initialRouteName="Home"
-			activeColor="#F2765A"
-			inactiveColor="#C4C4C4"
+			initialRouteName='Home'
+			activeColor='#F2765A'
+			inactiveColor='#C4C4C4'
 			barStyle={{ backgroundColor: "#fff", padding: 10, color: "#F2765A" }}>
 			<Tab.Screen
-				name="Home"
+				name='Home'
 				component={Home}
 				options={{
 					tabBarIcon: ({ color }) => <HomeIcon fill={color} />,
@@ -36,17 +36,17 @@ function BottomNavigation() {
 				}}
 			/>
 			<Tab.Screen
-				name="Routine"
+				name='Routine'
 				component={Routine}
 				options={{ tabBarIcon: ({ color }) => <RoutineIcon fill={color} /> }}
 			/>
 			<Tab.Screen
-				name="Profile"
+				name='Profile'
 				component={Profile}
 				options={{ tabBarIcon: ({ color }) => <ProfileIcon fill={color} /> }}
 			/>
 			<Tab.Screen
-				name="Settings"
+				name='Guardian'
 				component={Settings}
 				options={{ tabBarIcon: ({ color }) => <SettingIcon fill={color} /> }}
 			/>

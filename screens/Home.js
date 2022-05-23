@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	SafeAreaView,
 	Text,
@@ -18,6 +18,9 @@ import Rocket from "../assets/images/Rocket";
 import { TouchableCards } from "../components/TouchableCards";
 import AppBar from "../components/AppBar";
 import firebase from "../utils/firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GlobalContext } from "../context/GlobalContext";
+import { viewCurrentRoutine } from "../utils/APIs/FirebaseFunctions";
 
 // Current Width & Height of the screen
 const { width, height } = Dimensions.get("window");
@@ -41,6 +44,7 @@ const styles = StyleSheet.create({
 
 const Home = ({ user = "Saira", navigation }) => {
 	const [levels, setLevels] = React.useState([]);
+	const { studentState } = useContext(GlobalContext);
 	// async function getLevels() {
 	// 	const snapResult = [];
 	// 	const querySnapshot = await firebase
@@ -54,7 +58,16 @@ const Home = ({ user = "Saira", navigation }) => {
 	// useEffect(() => {
 	// 	getLevels();
 	// }, []);
-	console.log(levels);
+	useEffect(() => {
+		//console.log(`Hello ${studentState}`);
+
+		async function userLocal() {
+			await AsyncStorage.getAllKeys((err, res) => {
+				console.log(res);
+			});
+		}
+		userLocal();
+	}, []);
 	return (
 		<SafeAreaView>
 			<AppBar navigation={navigation} />
@@ -231,10 +244,29 @@ export const DailyChallengeCard = ({ ...props }) => {
 
 const RoutineCard = () => {
 	const [token, setToken] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [routine, setRoutine] = useState({});
+	const [countdown, setCountDown] = useState(0);
+	const [countdownId, setCountdownId] = useState("undefined");
 	const SECRET_KEY =
 		"AAAAJG6AsiA:APA91bGx19XgIVCeSztSp71zn0k_b9XNs15ssvbvMUQDaKP5LgHhs0pQ7V0SNZC4qKZcr7weVtr8e5M6WA7KEPFcAWIpJy8VHs5vyMbeXqzhfXcADJ-Kb3GIPGZ96QNiYe_yJBd9HiRC";
 
-	console.log(token);
+	async function getCurrentRoutine() {
+		try {
+			const id = await AsyncStorage.getItem("@studentId");
+			//setStudentId(JSON.parse(id)[0]);
+			//console.log(`Student ID:${studentId}`);
+			//await viewRoutines(studentId);
+			const currentRoutine = await viewCurrentRoutine(JSON.parse(id)[0]);
+
+			setRoutine(currentRoutine[0]);
+			setCountDown(currentRoutine[0]["StartTime"]);
+
+			setLoading(true);
+		} catch (e) {
+			console.log(e);
+		}
+	}
 	const sendNotification = async () => {
 		const tokenDevice = (await Notifications.getDevicePushTokenAsync()).data;
 		setToken(tokenDevice);
@@ -260,7 +292,14 @@ const RoutineCard = () => {
 			}
 		).catch((err) => console.log(err));
 	};
-
+	useEffect(() => {
+		getCurrentRoutine();
+	}, []);
+	useEffect(() => {
+		console.log(`Countdown: ${countdown}`);
+		console.log(routine);
+		setCountdownId("989389");
+	}, [countdown]);
 	return (
 		<TouchableCards
 			color='#3C67FF'
@@ -287,7 +326,7 @@ const RoutineCard = () => {
 						fontSize: 14,
 						fontFamily: "CorsaGrotesk-Regular",
 					}}>
-					Going to sleep
+					{loading ? routine["Name"] : "Loading..."}
 				</Text>
 				<Image source={require("../assets/images/sleeping.png")} />
 				<View
@@ -300,7 +339,10 @@ const RoutineCard = () => {
 						justifyContent: "center",
 					}}>
 					<CountDown
-						until={10}
+						until={
+							loading ? Math.round(countdown) - new Date().getTime() / 1000 : 0
+						}
+						id={countdownId}
 						onFinish={() => {
 							sendNotification();
 						}}
@@ -316,7 +358,6 @@ const RoutineCard = () => {
 						timeToShow={["H", "M", "S"]}
 						timeLabels={{ m: null, s: null }}
 						showSeparator
-						style={{}}
 					/>
 				</View>
 			</View>

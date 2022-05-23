@@ -1,5 +1,5 @@
 /** @format */
-
+import React from "react";
 import { View, TouchableOpacity, Text, Dimensions } from "react-native";
 import LeftArrow from "../assets/icons/LeftArrow";
 import Stars from "./Stars";

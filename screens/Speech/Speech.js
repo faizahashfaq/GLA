@@ -91,12 +91,12 @@ const Speech = ({ navigation }) => {
 	const listenHandler = () => {
 		setListening(false);
 		TextToSpeech.speak(currentWord);
-		console.log(questionIndex);
+		// console.log(questionIndex);
 	};
 	const speechHandler = () => {
 		setListening(!listening);
 		if (listening === true) {
-			console.log(`Listnening: ${listening}`);
+			// console.log(`Listnening: ${listening}`);
 			setQuestionIndex((index) => questions.length !== index && index + 1);
 
 			setCurrentWord(questions[questionIndex].word);
@@ -106,13 +106,13 @@ const Speech = ({ navigation }) => {
 	};
 	async function startRecording() {
 		try {
-			console.log("Requesting permissions..");
+			// console.log("Requesting permissions..");
 			await Audio.requestPermissionsAsync();
 			await Audio.setAudioModeAsync({
 				allowsRecordingIOS: true,
 				playsInSilentModeIOS: true,
 			});
-			console.log("Starting recording..");
+			// console.log("Starting recording..");
 			const { recording } = await Audio.Recording.createAsync(recordingOptions);
 			setRecording(recording);
 			console.log("Recording started");
@@ -168,11 +168,11 @@ const Speech = ({ navigation }) => {
 		return questionIndex / totalQuestions;
 		//TODO: Questions that are answered correctly
 	};
-	navigation.addListener("beforeRemove", (e) => {
-		e.preventDefault();
-		setQuitModal(!quitModal);
-		console.log(quitModal);
-	});
+	// navigation.addListener("beforeRemove", (e) => {
+	// 	e.preventDefault();
+	// 	setQuitModal(!quitModal);
+	// 	// console.log(quitModal);
+	// });
 	return (
 		<SafeAreaView>
 			{/* <GoBack goBack={() => navigation.goBack()} /> */}
@@ -494,7 +494,9 @@ const Speech = ({ navigation }) => {
 							<TouchableOpacity
 								activeOpacity={0.9}
 								onPress={() => {
-									navigation.goBack();
+									setQuitModal(false);
+									console.log(navigation);
+									navigation.navigate("Chapters");
 								}}
 								style={{
 									backgroundColor: "#F2765A",

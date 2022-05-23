@@ -21,28 +21,65 @@ import { GlobalContext } from "../../context/GlobalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ArrowIcon from "../../assets/icons/RightArrowIcon";
 import { emailValidation, emptyInputValidation } from "../../utils/validations";
+import { userLogin } from "../../utils/APIs/FirebaseFunctions";
 import StyledInput from "../../components/TextInput";
+
 const { width, height } = Dimensions.get("window");
 const App = ({ navigation }) => {
-	const { isLoggedIn, setIsLoggedIn } = useContext(GlobalContext);
+	const {
+		isLoggedIn,
+		setIsLoggedIn,
+		setUserState,
+		userState,
+		studentState,
+		setStudentState,
+	} = useContext(GlobalContext);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-
+	const user = {
+		email: email,
+		password: password,
+	};
 	const onLoginHandler = async () => {
 		try {
 			if (
 				(emptyInputValidation(email) || emptyInputValidation(password)) &&
 				emailValidation(email)
 			)
-				if (email === "admin@app.com" && password === "admin") {
-					await AsyncStorage.setItem("@isLoggedIn", "1");
-					setIsLoggedIn("1");
-				} else if (email !== "admin" || password !== "admin") {
-					showMessage({
-						message: "Incorrect email or password!",
-						type: "danger",
+				userLogin(user)
+					.then(async (userFirebase) => {
+						console.log(userFirebase);
+						if (user === undefined) {
+							showMessage({
+								message: "Incorrect email or password!",
+								type: "danger",
+							});
+							return;
+						} else {
+							setIsLoggedIn("1");
+							setUserState(userFirebase);
+							console.log(`Student ID: ${userFirebase["studentList"]}`);
+							setStudentState(userFirebase["studentList"]);
+							console.log(`Student ID:${studentState}`);
+							await AsyncStorage.setItem("@isLoggedIn", "1");
+							await AsyncStorage.setItem(
+								"@guardian",
+								JSON.stringify(userFirebase)
+							);
+							await AsyncStorage.setItem(
+								"@studentId",
+								JSON.stringify(userFirebase["studentList"])
+							);
+
+							// const existingLocalUser = await AsyncStorage.getItem("@guardian");
+							// existingLocalUser !== null
+							// 	? await AsyncStorage.removeItem("@guardian")
+							// 	: null;
+						}
+					})
+					.catch((e) => {
+						console.error(e);
 					});
-				}
 		} catch (e) {
 			console.log(e);
 		}

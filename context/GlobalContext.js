@@ -20,6 +20,10 @@ export const GlobalProvider = ({ children }) => {
 	const [allStars, setAllStars] = useState(10);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [guardianOn, setGuardianOn] = useState(false);
+	const [userId, setUserId] = useState("");
+	const [studentId, setStudentId] = useState("");
+	const [userState, setUserState] = useState("");
+	const [studentState, setStudentState] = useState("");
 
 	const value = {
 		isLoggedIn,
@@ -28,6 +32,14 @@ export const GlobalProvider = ({ children }) => {
 		setGuardianOn,
 		allStars,
 		setAllStars,
+		userId,
+		setUserId,
+		studentId,
+		setStudentId,
+		userState,
+		setUserState,
+		studentState,
+		setStudentState,
 	};
 	return (
 		<GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>

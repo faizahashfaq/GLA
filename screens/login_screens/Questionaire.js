@@ -11,10 +11,13 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GoBack from "../../components/GoBack";
+import { addStudent } from "../../utils/APIs/FirebaseFunctions";
 const { width, height } = Dimensions.get("window");
 import { GlobalContext } from "../../context/GlobalContext";
-const Questionaire = ({ navigation }) => {
-	const { setIsLoggedIn } = useContext(GlobalContext);
+const Questionaire = ({ route, navigation }) => {
+	const { student } = route.params;
+
+	const { setIsLoggedIn, studentId, setStudentId } = useContext(GlobalContext);
 	const [oneWord, setOneWord] = useState({
 		never: false,
 		rarely: false,
@@ -27,40 +30,6 @@ const Questionaire = ({ navigation }) => {
 		occasionally: false,
 		frequently: false,
 	});
-	const [levelDifficulty, setLevelDifficulty] = useState(1);
-	const difficultyRules = () => {
-		if (
-			(twoWords.occasionally && threeWords.rarely) ||
-			twoWords.frequently ||
-			threeWords.rarely
-		) {
-			setLevelDifficulty(2);
-		} else if (
-			twoWords.frequently &&
-			threeWords.occasionally &&
-			oneWord.frequently
-		) {
-			setLevelDifficulty(3);
-		} else if (
-			twoWords.frequently &&
-			threeWords.frequently &&
-			oneWord.frequently
-		) {
-			setLevelDifficulty(4);
-		} else {
-			setLevelDifficulty(1);
-		}
-	};
-	const analysingDifficulty = async () => {
-		//TODO:Send data to firebase
-
-		difficultyRules();
-		// console.log(levelDifficulty);
-	};
-	const loginLocalStorage = async () => {
-		await AsyncStorage.setItem("@isLoggedIn", "1");
-		setIsLoggedIn("1");
-	};
 	const [threeWords, setThreeWords] = useState({
 		never: false,
 		rarely: false,
@@ -85,10 +54,63 @@ const Questionaire = ({ navigation }) => {
 		occasionally: false,
 		frequently: false,
 	});
+	const [levelDifficulty, setLevelDifficulty] = useState(1);
+
+	let questionaire = {
+		id: "234567",
+		name: "",
+		description: "",
+		attemptDate: "",
+		questionList: [],
+		result: "",
+		answerList: [oneWord, twoWords, threeWords, gestures, device, signs],
+	};
+	const difficultyRules = (difficulty) => {
+		if (
+			(twoWords.occasionally && threeWords.rarely) ||
+			twoWords.frequently ||
+			threeWords.rarely
+		) {
+			setLevelDifficulty(2);
+		} else if (
+			twoWords.frequently &&
+			threeWords.occasionally &&
+			oneWord.frequently
+		) {
+			setLevelDifficulty(3);
+		} else if (
+			twoWords.frequently &&
+			threeWords.frequently &&
+			oneWord.frequently
+		) {
+			setLevelDifficulty(4);
+		} else {
+			setLevelDifficulty(1);
+		}
+
+		return difficulty;
+	};
+	const analysingDifficulty = async () => {
+		//TODO:Send data to firebase
+		const userId = await AsyncStorage.getItem("@userId");
+		console.log(`User ID locally ${userId}`);
+		const level = difficultyRules(levelDifficulty);
+		console.log(student);
+		const studentId = await addStudent(userId, student, questionaire, level);
+		console.log(studentId);
+		await AsyncStorage.setItem("@studentId", JSON.stringify(studentId));
+		setStudentId(studentId);
+		console.log(`Level difficulty ${level}`);
+		// console.log(levelDifficulty);
+	};
+	const loginLocalStorage = async () => {
+		await AsyncStorage.setItem("@isLoggedIn", "1");
+		setIsLoggedIn("1");
+	};
 
 	return (
 		<SafeAreaView>
-			<GoBack />
+			<GoBack goBack={() => navigation.goBack()} />
 			<ScrollView
 				scrollEnabled
 				style={{ paddingHorizontal: 20, marginBottom: 70 }}>

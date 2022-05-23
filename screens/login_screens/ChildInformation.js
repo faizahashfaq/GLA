@@ -13,7 +13,6 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { emptyInputValidation } from "../../utils/validations";
-
 const { width, height } = Dimensions.get("window");
 const ChildInformation = ({ navigation }) => {
 	const [checked, setChecked] = useState({
@@ -24,7 +23,14 @@ const ChildInformation = ({ navigation }) => {
 	const [date, setDate] = useState(moment().format("DD MMM, YYYY"));
 	const [show, setShow] = useState(false);
 	const [mode, setMode] = useState("date");
-	console.log(date);
+	const student = {
+		name: nickname,
+		dateOfBirth: date,
+		gender: checked.boy ? "boy" : "girl",
+		workingDays: 4,
+		profilePic: "",
+	};
+
 	const showMode = (currentMode) => {
 		setShow(true);
 		setMode(currentMode);
@@ -196,7 +202,9 @@ const ChildInformation = ({ navigation }) => {
 						onPress={() => {
 							if (checked.boy || checked.girl) {
 								if (emptyInputValidation(nickname)) {
-									navigation.navigate("questionaire");
+									navigation.navigate("questionaire", {
+										student,
+									});
 								}
 							}
 						}}

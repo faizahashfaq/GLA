@@ -26,6 +26,8 @@ const Settings = ({ navigation }) => {
 	const onLogOutHandler = async () => {
 		try {
 			await AsyncStorage.setItem("@isLoggedIn", "0");
+			await AsyncStorage.clear();
+
 			setIsLoggedIn(false);
 		} catch (e) {
 			console.log(e);

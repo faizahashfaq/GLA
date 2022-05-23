@@ -1,7 +1,7 @@
 /** @format */
 
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import {
 	StyleSheet,
@@ -18,38 +18,52 @@ import {
 import { Icon } from "react-native-elements";
 import { color } from "react-native-elements/dist/helpers";
 import GoBack from "../../components/GoBack";
+import { GlobalContext } from "../../context/GlobalContext";
 import StyledInput from "../../components/TextInput";
 import {
 	emptyInputValidation,
 	passwordSecurityCheck,
 } from "../../utils/validations";
+import { userSignup } from "../../utils/APIs/FirebaseFunctions";
 import FlashMessage from "react-native-flash-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 
 const SignUP_3 = ({ route, navigation }) => {
+	const { userId, setUserId } = useContext(GlobalContext);
 	//Name and Email from previous screen
 	const { name, email } = route.params;
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	let datasaving = {
+	let user = {
 		name: name,
 		email: email,
 		password: password,
 	};
-	console.log(datasaving);
 
 	const [imageDisplay, setImageDisplay] = useState({
 		display: "flex",
 		marginTop: 30,
 	});
-	const onPasswordConfirm = () => {
+
+	const onPasswordConfirm = async () => {
 		if (
 			(emptyInputValidation(password) ||
 				emptyInputValidation(confirmPassword)) &&
 			passwordSecurityCheck(password)
 		) {
-			//TODO: Async Firebase Database Save
-			password === confirmPassword && navigation.navigate("congrats");
+			//Done: Async Firebase Database Save
+			if (password === confirmPassword) {
+				userSignup(user).then(async (userId) => {
+					//Updating state if userId globally
+					setUserId(userId);
+					//Setting to local storage
+					await AsyncStorage.setItem("@userId", userId);
+					console.log(`Guardian ID: ${userId}`);
+					navigation.navigate("congrats");
+				});
+			}
+
 			setPassword("");
 			setConfirmPassword("");
 		} else {

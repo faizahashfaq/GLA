@@ -1,5 +1,5 @@
 /** @format */
-
+import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Text } from "react-native";
 import Profile from "../screens/Profile";

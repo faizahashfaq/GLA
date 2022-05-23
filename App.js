@@ -7,6 +7,8 @@ import FlashMessage from "react-native-flash-message";
 import { GlobalProvider } from "./context/GlobalContext";
 import GlobalNavigation from "./routes/GlobalNavigation";
 import { initializeFirebase } from "./utils/firebaseConfig";
+//import "react-native-gesture-handler";
+
 function App() {
 	const [IsReady, SetIsReady] = useState(false);
 	const LoadFonts = async () => {

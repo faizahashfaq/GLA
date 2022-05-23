@@ -315,30 +315,36 @@ async function viewCurrentRoutine(studentID) {
 //**********************************************************************//
 // view level
 //**********************************************************************//
-async function getLevel(levelID) {
-	const querySnapshot = await firebase
+async function getLevel(studentID) {
+	const stdLevelRef = await firebase
 		.firestore()
-		.collection("levels")
-		.doc(levelID)
+		.collection("reports")
+		.doc(studentID)
+		.collection("assigned-levels")
 		.get();
-	querySnapshot.forEach((doc) => console.log(doc.data()));
-	if (querySnapshot.empty) {
+	stdLevelRef.forEach((doc) => {
+		console.log(doc.data());
+	});
+	if (stdLevelRef.empty) {
 		console.log("level not found");
 	} else {
-		// return level object
-		var newLevel = new LevelClass(
-			querySnapshot.id,
-			querySnapshot.data().Name,
-			querySnapshot.data().Description,
-			querySnapshot.data().ChapterList,
-			querySnapshot.data().Name,
-			null,
-			querySnapshot.data().Type,
-			querySnapshot.data().Difficulty,
-			querySnapshot.data().Image
-		);
-		console.log("level found");
-		return newLevel;
+		var levelList = [];
+		stdLevelRef.forEach((doc) => {
+			var newLevel = new LevelClass(
+				(this.id = doc.id),
+				(this.name = doc.data().Name),
+				(this.chapterList = doc.data().CompletedChapters),
+				(this.gainedStarts = doc.data().GainedStars),
+				(this.completionTime = doc.data().CompletionTime),
+				(this.currentChapter = doc.data().CurrentChapter),
+				(this.totalChapters = doc.data().TotalChapters),
+				(this.image = doc.data().Image)
+			);
+			console.log("level found");
+			levelList.push(newLevel);
+		});
+		console.log(levelList);
+		return levelList;
 	}
 }
 

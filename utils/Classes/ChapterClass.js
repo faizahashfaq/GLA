@@ -11,6 +11,7 @@ class ChapterClass {
     image = null,
     contentID = null,
     duration = null,
+    chapterNumber = null,
     completionTime = null,
     gainedStar = null
   ) {
@@ -21,6 +22,7 @@ class ChapterClass {
     this.image = image;
     this.contentID = contentID;
     this.duration = duration;
+    this.chapterNumber = chapterNumber;
     this.completionTime = completionTime;
     this.gainedStar = gainedStar;
   }
